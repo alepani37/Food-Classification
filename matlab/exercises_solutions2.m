@@ -24,7 +24,7 @@
 %% (OBL)
 clear;
 close all;
-
+clc;
 % DATASET
 dataset_dir='food5'; %dataset_folder_name
 %dataset_dir = '15_ObjectCategories';
@@ -62,7 +62,6 @@ have_screen = ~isempty(getenv('DISPLAY'));
 % PATHS
 basepath = '..';
 wdir = pwd;
-wdir
 libsvmpath = [ wdir(1:end-6) fullfile('lib','libsvm-3.11','matlab')];
 addpath(libsvmpath)
 
@@ -72,9 +71,9 @@ nfeat_codebook = 60000; % number of descriptors used by k-means for the codebook
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 200; %numero per ogni classe
+num_train_img = 100; %numero per ogni classe
 % number of images selected for test (e.g. 50 for Caltech-101)
-num_test_img = 50;  %numero per ogni classe
+num_test_img = 20;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 500;
 
@@ -84,7 +83,7 @@ file_ext='jpg';
 % Create a new dataset split
 file_split = 'split.mat';
 if do_split_sets    
-    data = create_dataset_split_structure(...
+    data = create_dataset_split_structure_from_unbalanced_sets(...
         fullfile(basepath, 'img', dataset_dir), ... 
         num_train_img, ...
         num_test_img , ...
@@ -95,12 +94,14 @@ else
 end
 classes = {data.classname}; % create cell array of class name strings
 
+disp("Immagini caricate correttamente")
+
 % Extract SIFT features fon training and test images
 if do_feat_extraction   
     extract_sift_features(fullfile('..','img',dataset_dir),desc_name)    
 end
 
-
+disp("Estrazione delle feature SIFT completata correttamente")
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%% Part 1: quantize pre-computed image features %%%%%%%%%%%%

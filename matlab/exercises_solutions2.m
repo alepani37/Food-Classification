@@ -62,6 +62,7 @@ have_screen = ~isempty(getenv('DISPLAY'));
 % PATHS
 basepath = '..';
 wdir = pwd;
+wdir
 libsvmpath = [ wdir(1:end-6) fullfile('lib','libsvm-3.11','matlab')];
 addpath(libsvmpath)
 

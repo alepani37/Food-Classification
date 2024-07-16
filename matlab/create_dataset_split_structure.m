@@ -31,19 +31,19 @@ function data = create_dataset_split_structure(main_dir,Ntrain,Ntest,file_ext)
             %solo che abbiano tutti la stessa estensione
             
             ids = randperm(length(imgdir));
-            if c <= ids %ho aggiunto questo controllo altrimenti crasha
-                %length(imgdir)
-                data(c).n_images = length(imgdir);
-                data(c).classname = category_dirs(c).name;
-                data(c).files = {imgdir(:).name};
-                
-                data(c).train_id = false(1,data(c).n_images);
-                %ids(1:Ntrain)
-                data(c).train_id(ids(1:Ntrain))=true;
-                
-                data(c).test_id = false(1,data(c).n_images);
-                data(c).test_id(ids(Ntrain+1:Ntrain+min(Ntest,data(c).n_images-Ntrain)))=true;
-            end
+            %if c <= ids %ho aggiunto questo controllo altrimenti crasha
+            %length(imgdir)
+            data(c).n_images = length(imgdir);
+            data(c).classname = category_dirs(c).name;
+            data(c).files = {imgdir(:).name};
+            
+            data(c).train_id = false(1,data(c).n_images);
+            %ids(1:Ntrain)
+            data(c).train_id(ids(1:Ntrain))=true;
+            
+            data(c).test_id = false(1,data(c).n_images);
+            data(c).test_id(ids(Ntrain+1:Ntrain+min(Ntest,data(c).n_images-Ntrain)))=true;
+            
             
         end
     end

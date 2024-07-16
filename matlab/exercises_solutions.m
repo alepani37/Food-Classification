@@ -26,7 +26,7 @@ clear;
 close all;
 
 % DATASET
-dataset_dir='4_ObjectCategories';
+dataset_dir='food5';
 %dataset_dir = '15_ObjectCategories';
 
 % FEATURES extraction methods
@@ -62,6 +62,7 @@ have_screen = ~isempty(getenv('DISPLAY'));
 % PATHS
 basepath = '..';
 wdir = pwd;
+
 libsvmpath = [ wdir(1:end-6) fullfile('lib','libsvm-3.11','matlab')];
 addpath(libsvmpath)
 

@@ -27,7 +27,7 @@ close all;
 clc;
 % DATASET
 dataset_dir='food5'; %dataset_folder_name
-%dataset_dir = '15_ObjectCategories';
+%dataset_dir = '4_ObjectCategories';
 
 % FEATURES extraction methods
 % 'sift' for sparse features detection (SIFT descriptors computed at  
@@ -76,6 +76,8 @@ num_train_img = 100; %numero per ogni classe
 num_test_img = 20;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 500;
+%NUmero massimo di immagini prendibili per ogni classe
+num_max_img_per_classe = 140;
 
 % image file extension
 file_ext='jpg';
@@ -87,7 +89,8 @@ if do_split_sets
         fullfile(basepath, 'img', dataset_dir), ... 
         num_train_img, ...
         num_test_img , ...
-        file_ext);
+        file_ext, ...
+        num_max_img_per_classe); %numero di immagini massimo da considerare per classe
     save(fullfile(basepath,'img',dataset_dir,file_split),'data');
 else
     load(fullfile(basepath,'img',dataset_dir,file_split));

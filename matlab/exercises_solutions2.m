@@ -6,11 +6,13 @@
 %  Instructors:                                                           %
 %  L. Ballan     <lamberto.ballan@unifi.it>                               %
 %  L. Seidenari  <lorenzo.seidenari@unifi.it>                             %
+
 %                                                                         %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %                                                                         %
 %   BOW pipeline: Image classification using bag-of-features              %
 %                                                                         %
@@ -53,7 +55,7 @@ do_svm_precomp_linear_classification = 0;
 do_svm_inter_classification = 0;
 do_svm_chi2_classification = 0;
 
-visualize_feat = 0;
+visualize_feat = 1;
 visualize_words = 0;
 visualize_confmat = 1;
 visualize_res = 0;
@@ -110,6 +112,14 @@ disp("Estrazione delle feature SIFT completata correttamente")
 %%%%%%%%%%%%%%%%% Part 1: quantize pre-computed image features %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% 
+%%Compute  LBP for each image
+
+%definition about path information
+info.base = basepath;
+info.first = "img";
+info.dsdir = dataset_dir;
+[trainLBP,testLBP] = lpb_extraction(data,length(classes),num_train_img,num_test_img,info);
 
 %% Load pre-computed SIFT features for training images (OBL)
 
@@ -135,8 +145,6 @@ for i = 1:length(data) %per ogni categoria trovata
         lasti=lasti+1;
     end;
 end;
-
-
 %% Visualize SIFT features for training images
 if (visualize_feat && have_screen)
     nti=10;

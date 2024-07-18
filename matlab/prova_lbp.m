@@ -2,7 +2,7 @@
 close all;
 clc;
 % DATASET
-dataset_dir='food5'; %dataset_folder_name
+dataset_dir='food'; %dataset_folder_name
 %dataset_dir = '4_ObjectCategories';
 
 % FEATURES extraction methods
@@ -79,9 +79,10 @@ disp("Immagini caricate correttamente")
 % Extract SIFT features fon training and test images
 if do_feat_extraction   
     extract_sift_features(fullfile('..','img',dataset_dir),desc_name)    
+    disp("Estrazione delle feature SIFT completata correttamente")
 end
 
-disp("Estrazione delle feature SIFT completata correttamente")
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%% Part 1: quantize pre-computed image features %%%%%%%%%%%%
@@ -92,6 +93,7 @@ info.first = "img";
 info.dsdir = dataset_dir;
 info.desc_name = desc_name;
 [trainLBP,testLBP] = lpb_extraction(data,length(classes),num_train_img,num_test_img,info);
+disp("Parametri LBP estratti correttamente")
 %% % Concatenate bof-histograms into training and test matrices 
 f_train=cat(1,trainLBP.hist);
 f_test=cat(1,testLBP.hist);

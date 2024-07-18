@@ -6,8 +6,10 @@ function [trainLBP,testLBP] = lpb_extraction(data,num_classes,num_istance_per_cl
     %testLBP = zeros(num_classes * num_instance_per_class_test,1);
 
     for i = 1 : length(data)
+        disp(length(data))
         %estrazione delle LBP per ogni immagine di train
-
+        %fprintf("\nEstrazione elemento %d", num2str(i))
+        i
         %estrazione immagini di train della i-esima classe
         img = data(i).files(data(i).train_id);
         for j = 1 : length(img)

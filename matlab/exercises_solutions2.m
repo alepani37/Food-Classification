@@ -28,7 +28,7 @@ clear;
 close all;
 clc;
 % DATASET
-dataset_dir='food5'; %dataset_folder_name
+dataset_dir='food'; %dataset_folder_name
 %dataset_dir = '4_ObjectCategories';
 
 % FEATURES extraction methods

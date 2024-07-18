@@ -26,6 +26,7 @@ for i=1:length(classes)
     
     imgmiss={};
     if length(indmiss)
+        return; %da cancellare
         % for j=1:length(indmiss)
         %     imgmiss{end+1}=imread(desc_test(indmiss(j)).imgfname);
         % end

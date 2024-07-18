@@ -26,7 +26,7 @@ clear;
 close all;
 clc;
 % DATASET
-dataset_dir='food5'; %dataset_folder_name
+dataset_dir='food'; %dataset_folder_name
 %dataset_dir = '4_ObjectCategories';
 
 % FEATURES extraction methods
@@ -41,23 +41,23 @@ desc_name = 'dsift';
 % FLAGS
 do_feat_extraction = 1;
 do_split_sets = 1;
-
+do_show_logs = 0;
 do_form_codebook = 1;
 do_feat_quantization = 1;
 
 do_L2_NN_classification = 1;
 do_chi2_NN_classification = 0;
-do_svm_linar_classification = 1;
+do_svm_linar_classification = 0;
 do_svm_llc_linar_classification = 0;
 do_svm_precomp_linear_classification = 0;
 do_svm_inter_classification = 0;
 do_svm_chi2_classification = 0;
 
-do_visualize_feat = 0;
-visualize_words = 0;
-visualize_confmat = 1;
-visualize_res = 0;
-have_screen = ~isempty(getenv('DISPLAY'));
+do_visualize_feat = 1;
+do_visualize_words = 1;
+do_visualize_confmat = 1;
+do_visualize_res = 1;
+do_have_screen = 1; %~isempty(getenv('DISPLAY'));
 
 % PATHS
 basepath = '..';
@@ -66,7 +66,7 @@ libsvmpath = [ wdir(1:end-6) fullfile('lib','libsvm-3.11','matlab')];
 addpath(libsvmpath)
 
 % BOW PARAMETERS
-max_km_iters = 150; % maximum number of iterations for k-means
+max_km_iters = 1500; % maximum number of iterations for k-means
 nfeat_codebook = 60000; % number of descriptors used by k-means for the codebook generation
 norm_bof_hist = 1;
 
@@ -82,7 +82,7 @@ num_max_img_per_classe = 140;
 % image file extension
 file_ext='jpg';
 
-% Create a new dataset split
+%% Create a new dataset split
 file_split = 'split.mat';
 if do_split_sets    
     data = create_dataset_split_structure_from_unbalanced_sets(...
@@ -126,7 +126,9 @@ for i = 1:length(data) %per ogni categoria trovata
      images_descs = get_descriptors_files(data,i,file_ext,desc_name,'train'); %ex. 0001.dsift
      for j = 1:length(images_descs) 
         fname = fullfile(basepath,'img',dataset_dir,data(i).classname,images_descs{j});
-        fprintf('Loading %s \n',fname);
+        if do_show_logs
+            fprintf('Loading %s \n',fname);
+        end
         tmp = load(fname,'-mat');
         tmp.desc.class=i;
         tmp.desc.imgfname=regexprep(fname,['.' desc_name],'.jpg');
@@ -138,7 +140,7 @@ end;
 
 
 %% Visualize SIFT features for training images
-if (do_visualize_feat && have_screen)
+if 0 %(do_visualize_feat && do_have_screen)
     nti=10;
     fprintf('\nVisualize features for %d training images\n', nti);
     imgind=randperm(length(desc_train));
@@ -269,7 +271,7 @@ end
 %  To visually verify feature quantization computed above, we can show 
 %  image patches corresponding to the same visual word. 
 
-if (visualize_words && have_screen)
+if 0 %(do_visualize_words && do_have_screen)
     figure;
     %num_words = size(VC,1) % loop over all visual word types
     num_words = 10;
@@ -408,8 +410,8 @@ if do_L2_NN_classification
     compute_accuracy(data,labels_test, ...
         bof_l2lab,classes, ...
         method_name,desc_test,...
-        visualize_confmat & have_screen,... 
-        visualize_res & have_screen);
+        do_visualize_confmat & do_have_screen,... 
+        do_visualize_res & do_have_screen);
 end
 
 
@@ -451,8 +453,8 @@ if do_chi2_NN_classification
  
     % Compute classification accuracy
     compute_accuracy(data,labels_test,bof_chi2lab,classes,method_name,desc_test,...
-                      visualize_confmat & have_screen,... 
-                      visualize_res & have_screen);
+                      do_visualize_confmat & do_have_screen,... 
+                      do_visualize_res & do_have_screen);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -492,8 +494,8 @@ if do_svm_linar_classification
     method_name='SVM linear';
     % Compute classification accuracy
     compute_accuracy(data,labels_test,svm_lab,classes,method_name,desc_test,...
-                      visualize_confmat & have_screen,... 
-                      visualize_res & have_screen);
+                      do_visualize_confmat & do_have_screen,... 
+                      do_visualize_res & do_have_screen);
 end
 
 %% LLC LINEAR SVM
@@ -513,8 +515,8 @@ if do_svm_llc_linar_classification
     svm_llc_lab=svmpredict(labels_test,llc_test,model);
     method_name='llc+max-pooling';
     compute_accuracy(data,labels_test,svm_llc_lab,classes,method_name,desc_test,...
-                      visualize_confmat & have_screen,... 
-                      visualize_res & have_screen);    
+                      do_visualize_confmat & do_have_screen,... 
+                      do_visualize_res & do_have_screen);    
 end
 
 
@@ -559,8 +561,8 @@ if do_svm_precomp_linear_classification
     method_name='SVM precomp linear';
     % Compute classification accuracy
     compute_accuracy(data,labels_test,precomp_svm_lab,classes,method_name,desc_test,...
-                      visualize_confmat & have_screen,... 
-                      visualize_res & have_screen);
+                      do_visualize_confmat & do_have_screen,... 
+                      do_visualize_res & do_have_screen);
     % result is the same??? must be!
 end
 
@@ -620,8 +622,8 @@ if do_svm_inter_classification
     method_name='SVM IK';
     % Compute classification accuracy
     compute_accuracy(data,labels_test,precomp_ik_svm_lab,classes,method_name,desc_test,...
-                      visualize_confmat & have_screen,... 
-                      visualize_res & have_screen);
+                      do_visualize_confmat & do_have_screen,... 
+                      do_visualize_res & do_have_screen);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -655,8 +657,8 @@ if do_svm_chi2_classification
     method_name='SVM Chi2';
     % Compute classification accuracy
     compute_accuracy(data,labels_test,precomp_chi2_svm_lab,classes,method_name,desc_test,...
-                      visualize_confmat & have_screen,... 
-                      visualize_res & have_screen);
+                      do_visualize_confmat & do_have_screen,... 
+                      do_visualize_res & do_have_screen);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

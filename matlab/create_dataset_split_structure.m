@@ -16,7 +16,6 @@
 %    test_id: [1x1074 logical];  Boolean array indicating test files                                   
 function data = create_dataset_split_structure(main_dir,Ntrain,Ntest,file_ext)
     category_dirs = dir(main_dir);
- 
     %remove '..' and '.' directories
     category_dirs(~cellfun(@isempty, regexp({category_dirs.name}, '\.*')))=[];
     category_dirs(strcmp({category_dirs.name},'split.mat'))=[]; 

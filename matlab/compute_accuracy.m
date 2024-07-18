@@ -24,8 +24,8 @@ function compute_accuracy(data,labels_test,labels_pred,classes,method_name,desc_
 
     %% VISUALIZE examples %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %  Illustrate correcly classified and missclassified samples of each class
-    if (visualize_res)
+    if 0 %(visualize_res)
         fprintf('Visualize NN L2-BoW classification results\n\n');
-        visualize_results( classes, desc_test, labels_test, labels_pred );
+        visualize_results_lbp( classes, desc_test, labels_test, labels_pred );
     end
 end

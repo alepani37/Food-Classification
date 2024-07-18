@@ -6,11 +6,13 @@
 %  Instructors:                                                           %
 %  L. Ballan     <lamberto.ballan@unifi.it>                               %
 %  L. Seidenari  <lorenzo.seidenari@unifi.it>                             %
+
 %                                                                         %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %                                                                         %
 %   BOW pipeline: Image classification using bag-of-features              %
 %                                                                         %
@@ -26,7 +28,7 @@ clear;
 close all;
 clc;
 % DATASET
-dataset_dir='foodset1'; %dataset_folder_name
+dataset_dir='food'; %dataset_folder_name
 %dataset_dir = '4_ObjectCategories';
 
 % FEATURES extraction methods
@@ -52,6 +54,7 @@ do_svm_llc_linar_classification = 0;
 do_svm_precomp_linear_classification = 0;
 do_svm_inter_classification = 0;
 do_svm_chi2_classification = 0;
+
 
 do_visualize_feat = 1;
 do_visualize_words = 1;
@@ -110,6 +113,15 @@ disp("Estrazione delle feature SIFT completata correttamente")
 %%%%%%%%%%%%%%%%% Part 1: quantize pre-computed image features %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% 
+%%Compute  LBP for each image
+
+%definition about path information
+info.base = basepath;
+info.first = "img";
+info.dsdir = dataset_dir;
+info.desc_name = desc_name;
+[trainLBP,testLBP] = lpb_extraction(data,length(classes),num_train_img,num_test_img,info);
 
 %% Load pre-computed SIFT features for training images (OBL)
 
@@ -137,8 +149,6 @@ for i = 1:length(data) %per ogni categoria trovata
         lasti=lasti+1;
     end;
 end;
-
-
 %% Visualize SIFT features for training images
 if 0 %(do_visualize_feat && do_have_screen)
     nti=10;
@@ -386,6 +396,7 @@ if do_svm_llc_linar_classification
     llc_train = cat(1,desc_train.llc);
     llc_test = cat(1,desc_test.llc);
 end
+
 
 % Construct label Concatenate bof-histograms into training and test matrices 
 labels_train=cat(1,desc_train.class);

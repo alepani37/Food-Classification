@@ -119,6 +119,7 @@ disp("Estrazione delle feature SIFT completata correttamente")
 info.base = basepath;
 info.first = "img";
 info.dsdir = dataset_dir;
+info.desc_name = desc_name;
 [trainLBP,testLBP] = lpb_extraction(data,length(classes),num_train_img,num_test_img,info);
 
 %% Load pre-computed SIFT features for training images (OBL)
@@ -392,6 +393,7 @@ if do_svm_llc_linar_classification
     llc_train = cat(1,desc_train.llc);
     llc_test = cat(1,desc_test.llc);
 end
+
 
 % Construct label Concatenate bof-histograms into training and test matrices 
 labels_train=cat(1,desc_train.class);

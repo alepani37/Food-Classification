@@ -28,7 +28,11 @@ clear;
 close all;
 clc;
 % DATASET
+<<<<<<< Updated upstream
 dataset_dir='food'; %dataset_folder_name
+=======
+dataset_dir='prova_'; %dataset_folder_name
+>>>>>>> Stashed changes
 %dataset_dir = '4_ObjectCategories';
 
 % FEATURES extraction methods
@@ -37,8 +41,9 @@ dataset_dir='food'; %dataset_folder_name
 % descriptors computed at a grid of overlapped patches
 
 %desc_name = 'sift';
-desc_name = 'dsift';
+%desc_name = 'dsift';
 %desc_name = 'msdsift';
+desc_name = 'color_sift';
 
 % FLAGS
 do_feat_extraction = 1;
@@ -48,6 +53,7 @@ do_form_codebook = 1;
 do_feat_quantization = 1;
 
 do_L2_NN_classification = 1;
+<<<<<<< Updated upstream
 do_chi2_NN_classification = 0;
 do_svm_linar_classification = 0;
 do_svm_llc_linar_classification = 0;
@@ -61,6 +67,22 @@ do_visualize_words = 1;
 do_visualize_confmat = 1;
 do_visualize_res = 1;
 do_have_screen = 1; %~isempty(getenv('DISPLAY'));
+=======
+do_chi2_NN_classification = 1;
+
+do_svm_linar_classification = 1;
+do_svm_llc_linar_classification = 1;
+do_svm_precomp_linear_classification = 1;
+do_svm_inter_classification = 1;
+do_svm_chi2_classification = 1;
+
+visualize_feat = 1;
+visualize_words = 0;
+visualize_confmat = 1;
+visualize_res = 0;
+%have_screen = ~isempty(getenv('DISPLAY'));
+have_screen = 1;
+>>>>>>> Stashed changes
 
 % PATHS
 basepath = '..';

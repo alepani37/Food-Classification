@@ -2,7 +2,11 @@
 close all;
 clc;
 % DATASET
+<<<<<<< Updated upstream
 dataset_dir='food'; %dataset_folder_name
+=======
+dataset_dir='prova_'; %dataset_folder_name
+>>>>>>> Stashed changes
 %dataset_dir = '4_ObjectCategories';
 
 % FEATURES extraction methods

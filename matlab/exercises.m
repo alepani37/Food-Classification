@@ -26,7 +26,7 @@ clear;
 close all;
 
 % DATASET
-dataset_dir='4_ObjectCategories';
+dataset_dir='food5';
 %dataset_dir = '15_ObjectCategories';
 
 % FEATURES extraction methods
@@ -39,8 +39,8 @@ desc_name = 'dsift';
 %desc_name = 'msdsift';
 
 % FLAGS
-do_feat_extraction = 0;
-do_split_sets = 0;
+do_feat_extraction = 1;
+do_split_sets = 1;
 
 do_form_codebook = 1;
 do_feat_quantization = 1;

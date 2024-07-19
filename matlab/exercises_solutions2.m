@@ -28,12 +28,8 @@ clear;
 close all;
 clc;
 % DATASET
-<<<<<<< Updated upstream
-dataset_dir='food'; %dataset_folder_name
-=======
-dataset_dir='prova_'; %dataset_folder_name
->>>>>>> Stashed changes
-%dataset_dir = '4_ObjectCategories';
+%dataset_dir='garbage_classification'; %dataset_folder_name
+dataset_dir = 'prova_resized';
 
 % FEATURES extraction methods
 % 'sift' for sparse features detection (SIFT descriptors computed at  
@@ -41,9 +37,9 @@ dataset_dir='prova_'; %dataset_folder_name
 % descriptors computed at a grid of overlapped patches
 
 %desc_name = 'sift';
-%desc_name = 'dsift';
+desc_name = 'dsift';
 %desc_name = 'msdsift';
-desc_name = 'color_sift';
+%desc_name = 'color_sift';
 
 % FLAGS
 do_feat_extraction = 1;
@@ -53,21 +49,12 @@ do_form_codebook = 1;
 do_feat_quantization = 1;
 
 do_L2_NN_classification = 1;
-<<<<<<< Updated upstream
-do_chi2_NN_classification = 0;
-do_svm_linar_classification = 0;
-do_svm_llc_linar_classification = 0;
-do_svm_precomp_linear_classification = 0;
-do_svm_inter_classification = 0;
-do_svm_chi2_classification = 0;
-
 
 do_visualize_feat = 1;
 do_visualize_words = 1;
 do_visualize_confmat = 1;
 do_visualize_res = 1;
 do_have_screen = 1; %~isempty(getenv('DISPLAY'));
-=======
 do_chi2_NN_classification = 1;
 
 do_svm_linar_classification = 1;
@@ -82,8 +69,6 @@ visualize_confmat = 1;
 visualize_res = 0;
 %have_screen = ~isempty(getenv('DISPLAY'));
 have_screen = 1;
->>>>>>> Stashed changes
-
 % PATHS
 basepath = '..';
 wdir = pwd;
@@ -96,13 +81,13 @@ nfeat_codebook = 60000; % number of descriptors used by k-means for the codebook
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 100; %numero per ogni classe
+num_train_img = 30; %numero per ogni classe
 % number of images selected for test (e.g. 50 for Caltech-101)
-num_test_img = 20;  %numero per ogni classe
+num_test_img = 10;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 500;
 %NUmero massimo di immagini prendibili per ogni classe
-num_max_img_per_classe = 140;
+num_max_img_per_classe = 50;
 
 % image file extension
 file_ext='jpg';
@@ -172,8 +157,8 @@ for i = 1:length(data) %per ogni categoria trovata
     end;
 end;
 %% Visualize SIFT features for training images
-if 0 %(do_visualize_feat && do_have_screen)
-    nti=10;
+if 1 %(do_visualize_feat && do_have_screen)
+    nti=2;
     fprintf('\nVisualize features for %d training images\n', nti);
     imgind=randperm(length(desc_train));
     for i=1:nti
@@ -183,7 +168,7 @@ if 0 %(do_visualize_feat && do_have_screen)
         y=d.r;
         rad=d.rad;
         showcirclefeaturesrad([x,y,rad]);
-        title(sprintf('%d features in %s',length(d.c),d.imgfname));
+        %title(sprintf('%d features in %s',length(d.c),d.imgfname));
         pause
     end
 end
@@ -303,7 +288,7 @@ end
 %  To visually verify feature quantization computed above, we can show 
 %  image patches corresponding to the same visual word. 
 
-if 0 %(do_visualize_words && do_have_screen)
+if 1 %(do_visualize_words && do_have_screen)
     figure;
     %num_words = size(VC,1) % loop over all visual word types
     num_words = 10;

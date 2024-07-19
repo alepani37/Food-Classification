@@ -28,7 +28,7 @@
 % DATASET
 %dataset_dir='4_ObjectCategories';
 %dataset_dir = '15_ObjectCategories';
-dataset_dir = 'prova_';
+dataset_dir = 'prova_resized';
 
 % FEATURES extraction methods
 % 'sift' for sparse features detection (SIFT descriptors computed at
@@ -44,7 +44,7 @@ desc_name = 'color_sift';
 
 % FLAGS
 do_feat_extraction = 1;
-do_split_sets = 0;
+do_split_sets = 1;
 
 do_form_codebook = 1;
 do_feat_quantization = 1;
@@ -91,7 +91,7 @@ file_ext='jpg';
 file_split = 'split.mat';
 if do_split_sets
     data = create_dataset_split_structure(fullfile(basepath, 'img', ...
-        dataset_dir),num_train_img,num_test_img, num_val_img ,file_ext);
+        dataset_dir),num_train_img,num_test_img ,file_ext);
     save(fullfile(basepath,'img',dataset_dir,file_split),'data');
 else
     load(fullfile(basepath,'img',dataset_dir,file_split));
@@ -148,7 +148,10 @@ if (visualize_feat && have_screen)
     imgind=randperm(length(desc_train));
     for i=1:nti
         d=desc_train(imgind(i));
-        clf, showimage(imread(strrep(d.imgfname,'_train','')));
+        pattern = '_\d';
+        replace = '';
+        new_name = regexprep(d.imgfname,pattern,replace);
+        clf, showimage(imread(strrep(new_name,'_train','')));
         x=d.c;
         y=d.r;
         rad=d.rad;
@@ -159,8 +162,7 @@ if (visualize_feat && have_screen)
 end
 
 
-%% Load pre-computed SIFT features for test images
-
+%% Load pre-computed SIFT features for
 lasti=1;
 for i = 1:length(data)
     images_descs = get_descriptors_files(data,i,file_ext,desc_name,'test');

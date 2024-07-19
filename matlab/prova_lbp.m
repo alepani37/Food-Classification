@@ -2,11 +2,8 @@
 close all;
 clc;
 % DATASET
-<<<<<<< Updated upstream
-dataset_dir='food'; %dataset_folder_name
-=======
-dataset_dir='prova_'; %dataset_folder_name
->>>>>>> Stashed changes
+%dataset_dir='food'; %dataset_folder_name
+dataset_dir='prova_resized'; %dataset_folder_name
 %dataset_dir = '4_ObjectCategories';
 
 % FEATURES extraction methods
@@ -99,6 +96,10 @@ info.desc_name = desc_name;
 [trainLBP,testLBP] = lpb_extraction(data,length(classes),num_train_img,num_test_img,info);
 disp("Parametri LBP estratti correttamente")
 %% % Concatenate bof-histograms into training and test matrices 
+h= trainLBP.hist;
+trainLBP.hist = h';
+h = testLBP.hist;
+testLBP.hist = h';
 f_train=cat(1,trainLBP.hist);
 f_test=cat(1,testLBP.hist);
 
@@ -126,4 +127,27 @@ if do_L2_NN_classification
         method_name,testLBP,...
         visualize_confmat & have_screen,... 
         visualize_res & have_screen);
+end
+
+%% 
+if do_svm_linar_classification
+    % cross-validation
+    C_vals=log2space(7,10,5);
+    for i=1:length(C_vals);
+        opt_string=['-t 0  -v 5 -c ' num2str(C_vals(i))];
+        xval_acc(i)=svmtrain(labels_train,f_train,opt_string);
+    end
+    %select the best C among C_vals and test your model on the testing set.
+    [v,ind]=max(xval_acc);
+
+    % train the model and test
+    model=svmtrain(labels_train,f_train,['-t 0 -c ' num2str(C_vals(ind))]);
+    disp('*** SVM - linear ***');
+    svm_lab=svmpredict(labels_test,f_test,model);
+    
+    method_name='SVM linear';
+    % Compute classification accuracy
+    compute_accuracy_lbp(data,labels_test,svm_lab,classes,method_name,desc_test,...
+                      do_visualize_confmat & do_have_screen,... 
+                      do_visualize_res & do_have_screen);
 end

@@ -26,8 +26,8 @@ clear;
 close all;
 
 % DATASET
-dataset_dir='food5';
-%dataset_dir = '15_ObjectCategories';
+%dataset_dir='food5';
+dataset_dir = '4_ObjectCategories';
 
 % FEATURES extraction methods
 % 'sift' for sparse features detection (SIFT descriptors computed at  
@@ -131,7 +131,7 @@ end;
 
 
 %% Visualize SIFT features for training images
-if (visualize_feat && have_screen)
+if 1 %(visualize_feat && have_screen)
     nti=10;
     fprintf('\nVisualize features for %d training images\n', nti);
     imgind=randperm(length(desc_train));

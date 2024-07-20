@@ -25,6 +25,10 @@ for i=1:length(d)
         % SPARSE SIFT
         scales = [16 24 32 48];
         detect_features_dsift_color(fullfile(dirname,d(i).name),file_ext,scales);
+    elseif strcmp(file_ext,'sift_pyramid')
+        % SPARSE SIFT
+          scales = [16 24 32 48];
+        detect_features_dsift_pyramid(fullfile(dirname,d(i).name),file_ext,scales);
     end
 end
 

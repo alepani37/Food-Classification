@@ -14,7 +14,7 @@
 %    files: {1x1074 cell}; cell array with file names withouth path, e.g. img_100.jpg
 %    train_id: [1x1074 logical]; Boolean array indicating training files
 %    test_id: [1x1074 logical];  Boolean array indicating test files                                   
-function data = create_dataset_split_structure_from_unbalanced_sets(main_dir,Ntrain,Ntest,file_ext, numero_di_img_da_considerare)
+function data = create_dataset_split_structure_from_unbalanced_sets_val(main_dir,Ntrain,Nval,Ntest,file_ext, numero_di_img_da_considerare)
 % CREATE_DATASET_SPLIT_STRUCTURE crea un dataset da sorgenti sbilanciate di
 % immagini
     %main_dir = fullfile(basepath, 'img', dataset_dir)
@@ -45,7 +45,6 @@ function data = create_dataset_split_structure_from_unbalanced_sets(main_dir,Ntr
             
             try
                 imgdir = imgdir(1:numero_di_img_da_considerare);% prendiamo solo i primi n 
-                %ids = ids(1:numero_di_img_da_considerare); %prendiamo solo i primi n
                 ids = randperm(length(imgdir));
                 
             catch 
@@ -57,12 +56,16 @@ function data = create_dataset_split_structure_from_unbalanced_sets(main_dir,Ntr
             data(c).n_images = length(imgdir);
             data(c).classname = category_dirs(c).name;
             data(c).files = {imgdir(:).name};
-            
+    
+    
             data(c).train_id = false(1,data(c).n_images);
             data(c).train_id(ids(1:Ntrain))=true;
-            
+    
+            data(c).val_id = false(1,data(c).n_images);
+            data(c).val_id(ids(Ntrain+1:Ntrain+Nval))=true;
+    
             data(c).test_id = false(1,data(c).n_images);
-            data(c).test_id(ids(Ntrain+1:Ntrain+min(Ntest,data(c).n_images-Ntrain)))=true;
+            data(c).test_id(ids(Ntrain+Nval+1:Ntrain+Nval+min(Ntest,data(c).n_images-Ntrain-Nval)))=true;
 
         end
     end

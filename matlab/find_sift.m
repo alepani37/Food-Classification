@@ -13,9 +13,9 @@ function sift_arr = find_sift(I, circles, enlarge_factor)
 %%
 
 if ndims(I) == 3
-    I = im2double(rgb2gray(I));
+    I = im2uint8(rgb2gray(I));
 else
-    I = im2double(I);
+    I = im2uint8(I);
 end
 
 
@@ -148,8 +148,7 @@ sift_arr(normalize_ind,:) = sift_arr_norm;
 function [GX,GY]=gen_dgauss(sigma)
 
 f_wid = 4 * floor(sigma);
-G = normpdf(-f_wid:f_wid,0,sigma);
-G = G' * G;
+G = fspecial('gaussian', f_wid, sigma);
 [GX,GY] = gradient(G); 
 
 GX = GX * 2 ./ sum(sum(abs(GX)));

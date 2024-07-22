@@ -42,7 +42,7 @@ desc_name = 'sift_pyramid';
 
 % FLAGS
 do_feat_extraction = 1;
-do_split_sets = 0;
+do_split_sets = 1;
 
 do_form_codebook = 1;
 do_feat_quantization = 1;
@@ -69,31 +69,36 @@ libsvmpath = [ wdir(1:end-6) fullfile('lib','libsvm-3.11','matlab')];
 addpath(libsvmpath)
 
 % BOW PARAMETERS
-max_km_iters = 500; % maximum number of iterations for k-means
-nfeat_codebook = 60000; % number of descriptors used by k-means for the codebook generation
+max_km_iters = 900; % maximum number of iterations for k-means
+nfeat_codebook = 100000; % number of descriptors used by k-means for the codebook generation
 norm_bof_hist = 1;
 
 %%ROBA AGGIUNTA%%%%%%%
 % number of images selected for training (e.g. 30 for Caltech-101)
 num_train_img = 100; %numero per ogni classe
+
+%number of images selected fo validation
+num_val_img = 30;
 % number of images selected for test (e.g. 50 for Caltech-101)
 num_test_img = 20;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 500;
 %NUmero massimo di immagini prendibili per ogni classe
-num_max_img_per_classe = 125;
+num_max_img_per_classe = 155;
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 500;
 
 % image file extension
 file_ext='jpg';
 
-% Create a new dataset split
+
+%% Create a new dataset split
 file_split = 'split.mat';
 if do_split_sets    
-    data = create_dataset_split_structure_from_unbalanced_sets(...
+    data = create_dataset_split_structure_from_unbalanced_sets_val(...
         fullfile(basepath, 'img', dataset_dir), ... 
         num_train_img, ...
+        num_val_img,...
         num_test_img , ...
         file_ext, ...
         num_max_img_per_classe); %numero di immagini massimo da considerare per classe
@@ -134,7 +139,7 @@ disp("Estrazione delle feature SIFT completata correttamente")
 clear desc_train;
 lasti=1;
 for i = 1:length(data)
-    images_descs = get_descriptors_files(data,i,file_ext,desc_name,'train');
+    images_descs = get_descriptors_files_val(data,i,file_ext,desc_name,'train');
     for j = 1:length(images_descs)
          fprintf('Loading %d/%d \n',j,length(images_descs));
         for l = 1 : 4
@@ -176,7 +181,7 @@ end
 
 lasti=1;
 for i = 1:length(data)
-    images_descs = get_descriptors_files(data,i,file_ext,desc_name,'test');
+    images_descs = get_descriptors_files_val(data,i,file_ext,desc_name,'test');
     for j = 1:length(images_descs)
         fprintf('Loading %d/%d \n',j,length(images_descs));
         for l = 1 : 4
@@ -198,7 +203,7 @@ end;
 
 lasti=1;
 for i = 1:length(data)
-    images_descs = get_descriptors_files(data,i,file_ext,desc_name,'val');
+    images_descs = get_descriptors_files_val(data,i,file_ext,desc_name,'val');
 
     for j = 1:length(images_descs)
          fprintf('Loading %d/%d \n',j,length(images_descs));
@@ -322,7 +327,6 @@ if do_feat_quantization
             desc_test(i,j).quantdist = quantdist;
          end
     end
-
     for i=1:length(desc_val)
         fprintf('Feature quantization validation set: %d/%d \n',i,length(desc_val));
          for j = 1 : 4
@@ -335,6 +339,7 @@ if do_feat_quantization
          end
     end
 end
+      
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   End of EXERCISE 1                                                     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -452,6 +457,7 @@ end
 
 
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%% Part 3: image classification %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -462,10 +468,12 @@ for i = 1 : size(desc_train)
     desc_train_bof(end+1,:) =horzcat(desc_train(i,1).bof,desc_train(i,2).bof,desc_train(i,3).bof,desc_train(i,4).bof);
 end
 
+
 desc_val_bof = [];
 for i = 1 : size(desc_val)
     desc_val_bof(end+1,:) =horzcat(desc_val(i,1).bof,desc_val(i,2).bof,desc_val(i,3).bof,desc_val(i,4).bof);
 end
+
 
 desc_test_bof = [];
 for i = 1 : size(desc_test)
@@ -521,18 +529,15 @@ if do_svm_chi2_classification
     [precomp_chi2_svm_lab_train,conf]=svmpredict(labels_train,[(1:size(Ktrain,1))' Ktrain],model);
 
     method_name="SVM Chi2";
-    % Compute classification accuracy
-    acc_SVM_CHI2_train = compute_accuracy(data,labels_train,precomp_chi2_svm_lab_train,classes,method_name,desc_train,...
+    acc_SVM_CHI2_train = compute_accuracy_pyr(data,labels_train,precomp_chi2_svm_lab_train,classes,method_name,desc_train,...
         visualize_confmat & have_screen,...
         visualize_res & have_screen,"TRAINING SET");
-    acc_SVM_CHI2_val = compute_accuracy(data,labels_val,precomp_chi2_svm_lab_val,classes,method_name,desc_val,...
+    acc_SVM_CHI2_val = compute_accuracy_pyr(data,labels_val,precomp_chi2_svm_lab_val,classes,method_name,desc_val,...
         visualize_confmat & have_screen,...
         visualize_res & have_screen,"VALIDATION SET");
-    acc_SVM_CHI2_test = compute_accuracy(data,labels_test,precomp_chi2_svm_lab_test,classes,method_name,desc_test,...
+    acc_SVM_CHI2_test = compute_accuracy_pyr(data,labels_test,precomp_chi2_svm_lab_test,classes,method_name,desc_test,...
         visualize_confmat & have_screen,...
         visualize_res & have_screen,"TEST SET");
-
-
     methods_name(end+1) = method_name + ' k=' + nwords_codebook;
     bar_values(end+1, :) = [acc_SVM_CHI2_train,acc_SVM_CHI2_val,acc_SVM_CHI2_test];
 

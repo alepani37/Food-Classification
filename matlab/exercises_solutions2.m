@@ -36,8 +36,8 @@ dataset_dir = 'prova_resized';
 % Harris-Laplace keypoints) or 'dsift' for dense features detection (SIFT
 % descriptors computed at a grid of overlapped patches
 
-%desc_name = 'sift';
-desc_name = 'dsift';
+desc_name = 'sift';
+%desc_name = 'dsift';
 %desc_name = 'msdsift';
 %desc_name = 'color_sift';
 

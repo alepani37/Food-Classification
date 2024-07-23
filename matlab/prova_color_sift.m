@@ -49,13 +49,13 @@ do_split_sets = 1;
 do_form_codebook = 1;
 do_feat_quantization = 1;
 
-do_L2_NN_classification = 1;
-do_chi2_NN_classification = 1;
-do_svm_linar_classification = 0;
-do_svm_llc_linar_classification = 0;
+do_L2_NN_classification = 0;
+do_chi2_NN_classification = 0;
+do_svm_linar_classification = 1;
+do_svm_llc_linar_classification = 1;
 do_svm_precomp_linear_classification = 1;
-do_svm_inter_classification = 0;
-do_svm_chi2_classification = 0;
+do_svm_inter_classification = 1;
+do_svm_chi2_classification = 1;
 
 visualize_feat = 0;
 visualize_words = 0;
@@ -77,21 +77,24 @@ norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
 num_train_img = 100; %numero per ogni classe
+%number of images selected for validation
+num_val_img = 30;
 % number of images selected for test (e.g. 50 for Caltech-101)
 num_test_img = 20;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 500;
 %NUmero massimo di immagini prendibili per ogni classe
-num_max_img_per_classe = 140;
+num_max_img_per_classe = 165;
 
 % image file extension
 file_ext='jpg';
 
+%% 
 % Create a new dataset split
 file_split = 'split.mat';
 if do_split_sets
-    data = create_dataset_split_structure(fullfile(basepath, 'img', ...
-        dataset_dir),num_train_img,num_test_img ,file_ext);
+    data = create_dataset_split_structure_from_unbalanced_sets_val(fullfile(basepath, 'img', ...
+        dataset_dir),num_train_img,num_val_img,num_test_img ,file_ext,num_max_img_per_classe);
     save(fullfile(basepath,'img',dataset_dir,file_split),'data');
 else
     load(fullfile(basepath,'img',dataset_dir,file_split));
@@ -124,7 +127,7 @@ end
 clear desc_train;
 lasti=1;
 for i = 1:length(data)
-    images_descs = get_descriptors_files(data,i,file_ext,desc_name,'train');
+    images_descs = get_descriptors_files_val(data,i,file_ext,desc_name,'train');
     for j = 1:length(images_descs)
          fprintf('Loading %d/%d \n',j,length(images_descs));
         for l = 1 : 3
@@ -165,7 +168,7 @@ end
 %% Load pre-computed SIFT features for
 lasti=1;
 for i = 1:length(data)
-    images_descs = get_descriptors_files(data,i,file_ext,desc_name,'test');
+    images_descs = get_descriptors_files_val(data,i,file_ext,desc_name,'test');
     for j = 1:length(images_descs)
         fprintf('Loading %d/%d \n',j,length(images_descs));
         for l = 1 : 3
@@ -187,7 +190,7 @@ end;
 
 lasti=1;
 for i = 1:length(data)
-    images_descs = get_descriptors_files(data,i,file_ext,desc_name,'val');
+    images_descs = get_descriptors_files_val(data,i,file_ext,desc_name,'val');
 
     for j = 1:length(images_descs)
          fprintf('Loading %d/%d \n',j,length(images_descs));
@@ -308,7 +311,7 @@ if do_feat_quantization
          end
     end
 
-    %{
+    
     for i=1:length(desc_val)
         fprintf('Feature quantization validation set: %d/%d \n',i,length(desc_val));
          for j = 1 : 3
@@ -320,7 +323,7 @@ if do_feat_quantization
             desc_val(i,j).quantdist = quantdist;
          end
     end
-    %}
+    
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   End of EXERCISE 1                                                     %
@@ -415,7 +418,6 @@ for i=1:length(desc_test)
     end
 end
 
-%{
 for i=1:length(desc_val)
     for j = 1 : 3 
         visword = desc_val(i,j).visword;
@@ -431,7 +433,6 @@ for i=1:length(desc_val)
     end
 end
 
-%}
 
 
 
@@ -446,12 +447,12 @@ for i = 1 : size(desc_train)
     desc_train_bof(end+1,:) =horzcat(desc_train(i,1).bof,desc_train(i,2).bof,desc_train(i,3).bof);
 end
 
-%{
+
 desc_val_bof = [];
 for i = 1 : size(desc_val)
     desc_val_bof(end+1,:) =horzcat(desc_val(i,1).bof,desc_val(i,2).bof,desc_val(i,3).bof);
 end
-%}
+
 
 desc_test_bof = [];
 for i = 1 : size(desc_test)

@@ -96,10 +96,14 @@ info.desc_name = desc_name;
 [trainLBP,testLBP] = lpb_extraction(data,length(classes),num_train_img,num_test_img,info);
 disp("Parametri LBP estratti correttamente")
 %% % Concatenate bof-histograms into training and test matrices 
-h= trainLBP.hist;
-trainLBP.hist = h';
-h = testLBP.hist;
-testLBP.hist = h';
+for i = 1 : size(trainLBP,2)
+    trainLBP(i).hist = double(trainLBP(i).hist);
+end
+
+for i = 1 : size(testLBP,2)
+    testLBP(i).hist = double(testLBP(i).hist);
+end
+
 f_train=cat(1,trainLBP.hist);
 f_test=cat(1,testLBP.hist);
 
@@ -147,7 +151,7 @@ if do_svm_linar_classification
     
     method_name='SVM linear';
     % Compute classification accuracy
-    compute_accuracy_lbp(data,labels_test,svm_lab,classes,method_name,desc_test,...
-                      do_visualize_confmat & do_have_screen,... 
-                      do_visualize_res & do_have_screen);
+    compute_accuracy_lbp(data,labels_test,svm_lab,classes,method_name,testLBP,...
+                      1,... 
+                      1);
 end

@@ -44,7 +44,7 @@ desc_name = 'sift';
 % FLAGS
 do_feat_extraction = 1;
 do_split_sets = 1;
-do_show_logs = 0;
+do_show_logs = 1;
 do_form_codebook = 1;
 do_feat_quantization = 1;
 
@@ -55,15 +55,15 @@ do_visualize_words = 1;
 do_visualize_confmat = 1;
 do_visualize_res = 1;
 do_have_screen = 1; %~isempty(getenv('DISPLAY'));
-do_chi2_NN_classification = 1;
+do_chi2_NN_classification = 0;
 
 do_svm_linar_classification = 1;
-do_svm_llc_linar_classification = 1;
-do_svm_precomp_linear_classification = 1;
-do_svm_inter_classification = 1;
-do_svm_chi2_classification = 1;
+do_svm_llc_linar_classification = 0;
+do_svm_precomp_linear_classification = 0;
+do_svm_inter_classification = 0;
+do_svm_chi2_classification = 0;
 
-visualize_feat = 1;
+visualize_feat = 0;
 visualize_words = 0;
 visualize_confmat = 1;
 visualize_res = 0;
@@ -81,13 +81,13 @@ nfeat_codebook = 60000; % number of descriptors used by k-means for the codebook
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 30; %numero per ogni classe
+num_train_img = 100; %numero per ogni classe
 % number of images selected for test (e.g. 50 for Caltech-101)
-num_test_img = 10;  %numero per ogni classe
+num_test_img = 20;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 500;
 %NUmero massimo di immagini prendibili per ogni classe
-num_max_img_per_classe = 50;
+num_max_img_per_classe = 125;
 
 % image file extension
 file_ext='jpg';
@@ -291,7 +291,7 @@ end
 if 1 %(do_visualize_words && do_have_screen)
     figure;
     %num_words = size(VC,1) % loop over all visual word types
-    num_words = 10;
+    num_words = 5;
     fprintf('\nVisualize visual words (%d examples)\n', num_words);
     for i=1:num_words
       patches={};

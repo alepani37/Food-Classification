@@ -28,7 +28,7 @@
 % DATASET
 %dataset_dir='4_ObjectCategories';
 %dataset_dir = '15_ObjectCategories';
-dataset_dir = 'prova_resized';
+dataset_dir = 'ds';
 
 % FEATURES extraction methods
 % 'sift' for sparse features detection (SIFT descriptors computed at
@@ -346,7 +346,11 @@ if (visualize_words && have_screen)
             ind=find(d.visword==i);
             if length(ind)
                 %img=imread(strrep(d.imgfname,'_train',''));
-                img=im2gray(imread(d.imgfname));
+                d=desc_train(imgind(i));
+                pattern = '_\d';
+                replace = '';
+                new_name = regexprep(d.imgfname,pattern,replace);
+                img=im2gray(imread(new_name));
 
                 x=d.c(ind); y=d.r(ind); r=d.rad(ind);
                 bbox=[x-2*r y-2*r x+2*r y+2*r];

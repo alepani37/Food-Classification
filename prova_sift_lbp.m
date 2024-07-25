@@ -36,9 +36,9 @@ dataset_dir = 'ds';
 % Harris-Laplace keypoints) or 'dsift' for dense features detection (SIFT
 % descriptors computed at a grid of overlapped patches
 
-desc_name = 'msdsift';
+%desc_name = 'sift';
 %desc_name = 'dsift';
-%desc_name = 'msdsift';
+desc_name = 'msdsift';
 %desc_name = 'color_sift';
 
 % FLAGS
@@ -81,13 +81,13 @@ nfeat_codebook = 100000; % number of descriptors used by k-means for the codeboo
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 180; %numero per ogni classe
+num_train_img = 200; %numero per ogni classe
 % number of images selected for test (e.g. 50 for Caltech-101)
 num_test_img = 20;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 500;
 %NUmero massimo di immagini prendibili per ogni classe
-num_max_img_per_classe = 205;
+num_max_img_per_classe = 225;
 
 % image file extension
 file_ext='jpg';
@@ -120,6 +120,22 @@ disp("Estrazione delle feature SIFT completata correttamente")
 %%%%%%%%%%%%%%%%% Part 1: quantize pre-computed image features %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% 
+%%Compute  LBP for each image
+
+%definition about path information
+info.base = basepath;
+info.first = "img";
+info.dsdir = dataset_dir;
+info.desc_name = desc_name;
+[trainLBP,testLBP] = lpb_extraction(data,length(classes),num_train_img,num_test_img,info);
+for i = 1 : size(trainLBP,2)
+    trainLBP(i).hist = double(trainLBP(i).hist);
+end
+
+for i = 1 : size(testLBP,2)
+    testLBP(i).hist = double(testLBP(i).hist);
+end
 
 
 %% Load pre-computed SIFT features for training images (OBL)
@@ -149,7 +165,7 @@ for i = 1:length(data) %per ogni categoria trovata
     end;
 end;
 %% Visualize SIFT features for training images
-if 0 %(do_visualize_feat && do_have_screen)
+if 1 %(do_visualize_feat && do_have_screen)
     nti=2;
     fprintf('\nVisualize features for %d training images\n', nti);
     imgind=randperm(length(desc_train));
@@ -280,7 +296,7 @@ end
 %  To visually verify feature quantization computed above, we can show 
 %  image patches corresponding to the same visual word. 
 
-if 0 %(do_visualize_words && do_have_screen)
+if 1 %(do_visualize_words && do_have_screen)
     figure;
     %num_words = size(VC,1) % loop over all visual word types
     num_words = 5;
@@ -391,6 +407,8 @@ end
 % Concatenate bof-histograms into training and test matrices 
 bof_train=cat(1,desc_train.bof);
 bof_test=cat(1,desc_test.bof);
+f_train=cat(1,trainLBP.hist);
+f_test=cat(1,testLBP.hist);
 if do_svm_llc_linar_classification
     llc_train = cat(1,desc_train.llc);
     llc_test = cat(1,desc_test.llc);
@@ -400,6 +418,9 @@ end
 % Construct label Concatenate bof-histograms into training and test matrices 
 labels_train=cat(1,desc_train.class);
 labels_test=cat(1,desc_test.class);
+
+new_bof_train = [bof_train,f_train];
+new_bof_test = [bof_test,f_test];
 
 
 %% NN classification %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -491,7 +512,7 @@ if do_svm_linar_classification
     C_vals=log2space(7,10,5);
     for i=1:length(C_vals);
         opt_string=['-t 0  -v 5 -c ' num2str(C_vals(i))];
-        xval_acc(i)=svmtrain(labels_train,bof_train,opt_string);
+        xval_acc(i)=svmtrain(labels_train,new_bof_train,opt_string);
     end
     %select the best C among C_vals and test your model on the testing set.
     [v,ind]=max(xval_acc);
@@ -499,7 +520,7 @@ if do_svm_linar_classification
     % train the model and test
     model=svmtrain(labels_train,bof_train,['-t 0 -c ' num2str(C_vals(ind))]);
     disp('*** SVM - linear ***');
-    svm_lab=svmpredict(labels_test,bof_test,model);
+    svm_lab=svmpredict(labels_test,new_bof_test,model);
     
     method_name='SVM linear';
     % Compute classification accuracy
@@ -549,8 +570,8 @@ end
 
 if do_svm_precomp_linear_classification
     % compute kernel matrix
-    Ktrain = bof_train*bof_train';
-    Ktest = bof_test*bof_train';
+    Ktrain = new_bof_train*new_bof_train';
+    Ktest = new_bof_test*new_bof_train';
 
     % cross-validation
     C_vals=log2space(7,10,5);
@@ -599,18 +620,18 @@ end
 % try a non-linear svm with the histogram intersection kernel!
 
 if do_svm_inter_classification
-    Ktrain=zeros(size(bof_train,1),size(bof_train,1));
-    for i=1:size(bof_train,1)
-        for j=1:size(bof_train,1)
-            hists = [bof_train(i,:);bof_train(j,:)];
+    Ktrain=zeros(size(new_bof_train,1),size(new_bof_train,1));
+    for i=1:size(new_bof_train,1)
+        for j=1:size(new_bof_train,1)
+            hists = [new_bof_train(i,:);new_bof_train(j,:)];
             Ktrain(i,j)=sum(min(hists));
         end
     end
 
-    Ktest=zeros(size(bof_test,1),size(bof_train,1));
-    for i=1:size(bof_test,1)
-        for j=1:size(bof_train,1)
-            hists = [bof_test(i,:);bof_train(j,:)];
+    Ktest=zeros(size(new_bof_test,1),size(new_bof_train,1));
+    for i=1:size(new_bof_test,1)
+        for j=1:size(new_bof_train,1)
+            hists = [new_bof_test(i,:);new_bof_train(j,:)];
             Ktest(i,j)=sum(min(hists));
         end
     end
@@ -646,8 +667,8 @@ end
 
 if do_svm_chi2_classification    
     % compute kernel matrix
-    Ktrain = kernel_expchi2(bof_train,bof_train);
-    Ktest = kernel_expchi2(bof_test,bof_train);
+    Ktrain = kernel_expchi2(new_bof_train,new_bof_train);
+    Ktest = kernel_expchi2(new_bof_test,new_bof_train);
     
     % cross-validation
     C_vals=log2space(2,10,5);

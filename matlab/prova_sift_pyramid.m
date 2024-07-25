@@ -27,7 +27,7 @@ clc
 % DATASET
 %dataset_dir='4_ObjectCategories';
 %dataset_dir = '15_ObjectCategories';
-dataset_dir = 'prova_resized';
+dataset_dir = 'ds';
 
 % FEATURES extraction methods
 % 'sift' for sparse features detection (SIFT descriptors computed at
@@ -49,10 +49,10 @@ do_feat_quantization = 1;
 
 do_L2_NN_classification = 0;
 do_chi2_NN_classification = 0;
-do_svm_linar_classification = 0;
+do_svm_linar_classification = 1;
 do_svm_llc_linar_classification = 0;
-do_svm_precomp_linear_classification = 0;
-do_svm_inter_classification = 0;
+do_svm_precomp_linear_classification = 1;
+do_svm_inter_classification = 1;
 do_svm_chi2_classification = 1;
 
 visualize_feat = 0;

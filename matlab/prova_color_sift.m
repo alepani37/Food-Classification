@@ -76,15 +76,15 @@ nfeat_codebook = 60000; % number of descriptors used by k-means for the codebook
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 100; %numero per ogni classe
+num_train_img = 180; %numero per ogni classe
 %number of images selected for validation
 num_val_img = 30;
 % number of images selected for test (e.g. 50 for Caltech-101)
 num_test_img = 20;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
-nwords_codebook = 500;
+nwords_codebook = 1000;
 %NUmero massimo di immagini prendibili per ogni classe
-num_max_img_per_classe = 165;
+num_max_img_per_classe = 235;
 
 % image file extension
 file_ext='jpg';
@@ -99,7 +99,8 @@ if do_split_sets
 else
     load(fullfile(basepath,'img',dataset_dir,file_split));
 end
-classes = {data.classname}; % create cell array of class name strings
+classes = {data.classname}; %
+% create cell array of class name strings
 
 % Extract SIFT features fon training and test images
 if do_feat_extraction
@@ -146,7 +147,7 @@ end
 
 %% Visualize SIFT features for training images
 if (visualize_feat && have_screen)
-    nti=10;
+    nti=2;
     fprintf('\nVisualize features for %d training images\n', nti);
     imgind=randperm(length(desc_train));
     for i=1:nti
@@ -546,3 +547,30 @@ if do_svm_linar_classification
                       visualize_res & have_screen);
 end
 
+%% 
+if do_svm_chi2_classification    
+    % compute kernel matrix
+    Ktrain = kernel_expchi2(bof_train,bof_train);
+    Ktest = kernel_expchi2(bof_test,bof_train);
+    
+    % cross-validation
+    C_vals=log2space(2,10,5);
+    for i=1:length(C_vals);
+        opt_string=['-t 4  -v 5 -c ' num2str(C_vals(i))];
+        xval_acc(i)=svmtrain(labels_train,[(1:size(Ktrain,1))' Ktrain],opt_string);
+    end
+    [v,ind]=max(xval_acc);
+
+    % train the model and test
+    model=svmtrain(labels_train,[(1:size(Ktrain,1))' Ktrain],['-t 4 -c ' num2str(C_vals(ind))] );
+    % we supply the missing scalar product (actually the values of non-support vectors could be left as zeros.... 
+    % consider this if the kernel is computationally inefficient.
+    disp('*** SVM - Chi2 kernel ***');
+    [precomp_chi2_svm_lab,conf]=svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
+    
+    method_name='SVM Chi2';
+    % Compute classification accuracy
+    compute_accuracy(data,labels_test,precomp_chi2_svm_lab,classes,method_name,desc_test,...
+                      visualize_confmat & have_screen,... 
+                      visualize_res & have_screen);
+end

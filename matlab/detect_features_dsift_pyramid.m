@@ -20,7 +20,7 @@
 function detect_features_dsift_pyramid(im_dir,file_ext,varargin)
 
 stride = 6;
-do_resizeimage = 1;
+do_resizeimage = 0;
 
 dd = dir(fullfile(im_dir,'*.jpg'));
 if nargin < 3

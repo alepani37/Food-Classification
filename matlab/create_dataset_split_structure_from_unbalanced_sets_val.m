@@ -34,7 +34,7 @@ function data = create_dataset_split_structure_from_unbalanced_sets_val(main_dir
     end 
     
     for c = 1:length(category_dirs)
-        
+        fprintf("iterazione %d di %d \n", c, length(category_dirs))
         if isdir(fullfile(main_dir,category_dirs(c).name)) ...
                 && ~strcmp(category_dirs(c).name,'.') ...
                 && ~strcmp(category_dirs(c).name,'..')

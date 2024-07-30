@@ -8,8 +8,10 @@ function compute_accuracy(data,labels_test,labels_pred,classes,method_name,desc_
     % normalize CM considering categories for each class (e.g. in Caltech-101 
     % it is very important since some categories have few images) 
     CMnorm = CM ./ repmat( sum(CM,2), [1 size(CM,2)] );
+    %whos CMnorm
+    %who classes
     if (visualize_confmat)
-        figure;
+        %figure;
         if 1 %length(data) <= 15
             confmatrix_show(CMnorm, classes);
             title([method_name ' classification']);
@@ -21,6 +23,7 @@ function compute_accuracy(data,labels_test,labels_pred,classes,method_name,desc_
     acc = mean(diag(CMnorm));
     writematrix(CMnorm,'M.csv') 
     fprintf('OVERALL %s classification accuracy: %1.4f\n\n',method_name,acc);
+    calculateMacroF1Score(CMnorm, classes);
 
     %% VISUALIZE examples %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %  Illustrate correcly classified and missclassified samples of each class

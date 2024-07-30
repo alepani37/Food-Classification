@@ -22,9 +22,9 @@
 %                                                                         %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %run('path_to_vlfeat/vlfeat-0.9.21/toolbox/vl_setup');
-
-%clear;
-%close all;
+clc
+clear;
+close all;
 % DATASET
 %dataset_dir='4_ObjectCategories';
 %dataset_dir = '15_ObjectCategories';
@@ -101,8 +101,8 @@ else
 end
 classes = {data.classname}; % create cell array of class name strings
 
-% Extract SIFT features fon training and test images
-if do_feat_extraction
+%% Extract SIFT features fon training and test images
+if 1% do_feat_extraction
     extract_sift_features(fullfile('..','img',dataset_dir),desc_name)
 end
 
@@ -124,12 +124,13 @@ end
 %  desc(i).rad :  Nx1 array with radius for N SIFT features
 %  desc(i).sift : Nx128 array with N SIFT descriptors
 %  desc(i).imgfname : file name of original image
-clear desc_train;
+% clear desc_train;
 lasti=1;
 for i = 1:length(data)
     images_descs = get_descriptors_files_val(data,i,file_ext,desc_name,'train');
     for j = 1:length(images_descs)
-         fprintf('Loading %d/%d \n',j,length(images_descs));
+        percentuale = ((i-1)*length(images_descs) + j)/ (length(data) * length(images_descs));
+        fprintf('Loading %d/%d of %d of %d (%f %%) \n',j,length(images_descs), i, length(data), percentuale);
         for l = 1 : 3
             fname = fullfile(basepath,'img',dataset_dir,data(i).classname,[images_descs{j}(1:end-11),'_',num2str(l),'.color_sift']);
             tmp = load(fname,'-mat');

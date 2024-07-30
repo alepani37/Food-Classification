@@ -45,6 +45,7 @@ desc_name = 'sift';
 do_feat_extraction = 1;
 do_split_sets = 1;
 do_show_logs = 1;
+do_show_internal_logs = 0; %per non vedere tutti i log strani che rallentano
 do_form_codebook = 1;
 do_feat_quantization = 1;
 
@@ -109,9 +110,10 @@ classes = {data.classname}; % create cell array of class name strings
 
 disp("Immagini caricate correttamente")
 
-% Extract SIFT features fon training and test images
+%% Extract SIFT features fon training and test images
+
 if do_feat_extraction   
-    extract_sift_features(fullfile('..','img',dataset_dir),desc_name)    
+    extract_sift_features(fullfile('..','img',dataset_dir),desc_name, do_show_internal_logs)    
 end
 
 disp("Estrazione delle feature SIFT completata correttamente")
@@ -129,6 +131,7 @@ info.first = "img";
 info.dsdir = dataset_dir;
 info.desc_name = desc_name;
 [trainLBP,testLBP] = lpb_extraction(data,length(classes),num_train_img,num_test_img,info);
+disp("Estrazione LBP completata")
 
 %% Load pre-computed SIFT features for training images (OBL)
 
@@ -156,7 +159,8 @@ for i = 1:length(data) %per ogni categoria trovata
         lasti=lasti+1;
     end;
 end;
-%% Visualize SIFT features for training images
+disp("Caricamento completato")
+%% Extra: Visualize SIFT features for training images
 if 1 %(do_visualize_feat && do_have_screen)
     nti=2;
     fprintf('\nVisualize features for %d training images\n', nti);
@@ -408,7 +412,7 @@ end
 % Construct label Concatenate bof-histograms into training and test matrices 
 labels_train=cat(1,desc_train.class);
 labels_test=cat(1,desc_test.class);
-
+disp("Fatto")
 
 %% NN classification %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -450,7 +454,7 @@ end
 %     accuracies to the L2 classification above
 
 
-if do_chi2_NN_classification
+if 1 %do_chi2_NN_classification
     % compute pair-wise CHI2
     bof_chi2dist = zeros(size(bof_test,1),size(bof_train,1));
     
@@ -517,7 +521,7 @@ if do_svm_linar_classification
 end
 
 %% LLC LINEAR SVM
-if do_svm_llc_linar_classification
+if 1 %do_svm_llc_linar_classification
     % cross-validation
     C_vals=log2space(7,10,5);
     for i=1:length(C_vals);
@@ -555,7 +559,7 @@ end
 %     This should produce the same results.
 
 
-if do_svm_precomp_linear_classification
+if 1 %do_svm_precomp_linear_classification
     % compute kernel matrix
     Ktrain = bof_train*bof_train';
     Ktest = bof_test*bof_train';
@@ -606,7 +610,7 @@ end
 %% 4.2: INTERSECTION KERNEL (pre-compute kernel) %%%%%%%%%%%%%%%%%%%%%%%%%%
 % try a non-linear svm with the histogram intersection kernel!
 
-if do_svm_inter_classification
+if 1 %do_svm_inter_classification
     Ktrain=zeros(size(bof_train,1),size(bof_train,1));
     for i=1:size(bof_train,1)
         for j=1:size(bof_train,1)
@@ -652,7 +656,7 @@ end
 
 %% 4.3 & 4.4: CHI-2 KERNEL (pre-compute kernel) %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if do_svm_chi2_classification    
+if 1 %do_svm_chi2_classification    
     % compute kernel matrix
     Ktrain = kernel_expchi2(bof_train,bof_train);
     Ktest = kernel_expchi2(bof_test,bof_train);

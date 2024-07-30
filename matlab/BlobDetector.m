@@ -18,7 +18,7 @@
 %%            rad    - circular blob radius
 %%
 function [r, c, rad] = BlobDetector(im, sigma, k, sigma_final, threshold, debug)
-
+do_show_internal_logs = 0;
 if nargin<6
     debug=0;
 end;
@@ -40,10 +40,12 @@ LoG =  sigma^2 * fspecial('log', filt_size, sigma);
 
 % generate the responses for the remaining levels
 if 1 % Faster version: keep the filter size, downsample the image
-fprintf('Filtering with Laplacian (keep filter size the same, downsample image)... \n');
+%fprintf('Filtering with Laplacian (keep filter size the same, downsample image)... \n');
 imRes = im;
 for i = 1:n
-    fprintf('Sigma %f\n', sigma * k^(i-1));
+    if do_show_internal_logs
+        fprintf('Sigma %f\n', sigma * k^(i-1));
+    end
     imFiltered = imfilter(imRes, LoG, 'same', 'replicate'); % filter the image with LoG
     % note that no scale normalization is needed: the fact that the filter
     % remains the same size while the image is downsampled ensures that the
@@ -85,7 +87,7 @@ end;
 
 
 tic
-fprintf('Performing nonmaximum suppression within scales...\n');
+%fprintf('Performing nonmaximum suppression within scales...\n');
 % perform non-maximum suppression for each scale-space slice
 supprSize = 3;
 maxSpace = zeros(h, w, n);
@@ -98,7 +100,7 @@ toc
 
 % non-maximum suppression between scales and threshold
 tic
-fprintf('Performing nonmaximum suppression between scales...\n');
+%fprintf('Performing nonmaximum suppression between scales...\n');
 for i = 1:n
     maxSpace(:,:,i) = max(maxSpace(:,:,max(i-1,1):min(i+1,n)),[],3);
 end

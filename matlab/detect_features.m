@@ -19,12 +19,13 @@
 % Modified by Lamberto Ballan - 2/9/2013
 
 function [] = detect_features(im_dir,file_ext,show_img)
-        
+    do_show_internal_logs = 0;
+
     dd = dir(fullfile(im_dir,'*.jpg'));
     if ~exist('show_img','var')
         show_img = false;
     end    
-
+    
     % detector paramteres
     sigma       = 2;              % initial scale
     k           = sqrt(sqrt(2));  % scale step
@@ -40,15 +41,20 @@ function [] = detect_features(im_dir,file_ext,show_img)
 
         fname_out = [fname(1:end-3),file_ext];
         if exist(fname_out,'file')
-            fprintf('File exists! Skipping %s \n',fname_out);
+            if do_show_internal_logs
+                fprintf('File exists! Skipping %s \n',fname_out);
+            end
             continue;
         end;
 
-        fprintf('Detecting and describing features: %s \n',fname_out);
+        if do_show_internal_logs    
+            fprintf('Detecting and describing features: %s \n',fname_out);
+        end
         Im = imread(fname);
         Im = mean(double(Im),3)./max(double(Im(:)));
 
         % compute features (LoG)
+        
         [r, c, rad] = BlobDetector(Im, sigma, k, sigma_final, threshold);
 
         % describe features

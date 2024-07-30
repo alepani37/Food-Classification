@@ -110,7 +110,7 @@ classes = {data.classname}; % create cell array of class name strings
 
 disp("Immagini caricate correttamente")
 
-% Extract SIFT features fon training and test images
+%% Extract SIFT features fon training and test images
 if do_feat_extraction   
     extract_sift_features(fullfile('..','img',dataset_dir),desc_name)    
 end
@@ -144,6 +144,8 @@ for i = 1:length(data)
          fprintf('Loading %d/%d \n',j,length(images_descs));
         for l = 1 : 4
             fname = fullfile(basepath,'img',dataset_dir,data(i).classname,[images_descs{j}(1:end-13),'_',num2str(l),'.sift_pyramid']);
+            fname
+            pause
             tmp = load(fname,'-mat');
             tmp.desc.class=i;
             tmp.desc.imgfname=regexprep(fname,['.' desc_name],'.jpg');

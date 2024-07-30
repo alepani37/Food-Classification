@@ -26,15 +26,17 @@ function data = create_dataset_split_structure_from_unbalanced_sets(main_dir,Ntr
     
     %Conteggio per avere la classe sbilanciata con meno immagini
     numero_file_minimo_per_classe = realmax;
+    categoria_meno_rappresentata = "";
     for c = 1:length(category_dirs)
         imgdir = dir(fullfile(main_dir,category_dirs(c).name, ['*.' file_ext]));
         if numero_file_minimo_per_classe > length(imgdir)
             numero_file_minimo_per_classe = length(imgdir);
+            categoria_meno_rappresentata = category_dirs(c).name;
         end
     end 
     
     for c = 1:length(category_dirs)
-        
+        fprintf("iterazione %d di %d \n", c, length(category_dirs))
         if isdir(fullfile(main_dir,category_dirs(c).name)) ...
                 && ~strcmp(category_dirs(c).name,'.') ...
                 && ~strcmp(category_dirs(c).name,'..')
@@ -50,6 +52,7 @@ function data = create_dataset_split_structure_from_unbalanced_sets(main_dir,Ntr
                 
             catch 
                 warning("Numero di immagini della categoria meno rappresentata: %d", numero_file_minimo_per_classe);
+                warning("Categoria meno rappresentata: %s", categoria_meno_rappresentata);
                 warning("Numero di immagini scelte per ogni classe del dataset: %d", Ntrain);
                 error("Hai scelto troppi file per fare il training oppure hai troppe poche immagini di una certa categoria");
             end

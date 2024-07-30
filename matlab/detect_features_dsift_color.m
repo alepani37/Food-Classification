@@ -20,7 +20,7 @@
 function detect_features_dsift_color(im_dir,file_ext,varargin)
 
 stride = 6;
-do_resizeimage = 1;
+do_resizeimage = 0;
 
 dd = dir(fullfile(im_dir,'*.jpg'));
 if nargin < 3
@@ -29,7 +29,8 @@ else
     scales = cell2mat(varargin(1));
 end
 
-for i = 1:length(dd)
+parfor i = 1:length(dd)
+    fprintf("Elemento %d di %d\n", i, length(dd))
     %for i = 1:length(dd)
 
     fname = fullfile(im_dir,dd(i).name);
@@ -62,7 +63,7 @@ for i = 1:length(dd)
     quadrant_rows = rows / 2;
     quadrant_columns = columns / 2;
 
-    % Extract the four quadrants
+    % Extract the four quadrants -> no qua non vengono estratti
     
    
    
@@ -94,7 +95,8 @@ for i = 1:length(dd)
     
         
         iSave(desc,fname_out);
-        clear rad; 
+        %clear rad; 
+        rad = [];
     end
 end
 

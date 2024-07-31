@@ -417,9 +417,9 @@ f_test=cat(1,testLBP.hist);
 new_bof_train = [bof_train,f_train];
 new_bof_test = [bof_test,f_test];
 %% PCA
-Zpca = PCA(new_bof_train,2);
+Zpca = PCA(new_bof_train',4);
 train_pca = Zpca';
-Zt_pca = PCA(new_bof_test,2);
+Zt_pca = PCA(new_bof_test',4);
 test_pca = Zt_pca';
 fprintf("Principal Component Analysis complete\n");
 %% 
@@ -517,15 +517,15 @@ if do_svm_linar_classification
     C_vals=log2space(7,10,5);
     for i=1:length(C_vals);
         opt_string=['-t 0  -v 5 -c ' num2str(C_vals(i))];
-        xval_acc(i)=svmtrain(labels_train,bof_train,opt_string);
+        xval_acc(i)=svmtrain(labels_train,train_pca,opt_string);
     end
     %select the best C among C_vals and test your model on the testing set.
     [v,ind]=max(xval_acc);
 
     % train the model and test
-    model=svmtrain(labels_train,bof_train,['-t 0 -c ' num2str(C_vals(ind))]);
+    model=svmtrain(labels_train,train_pca,['-t 0 -c ' num2str(C_vals(ind))]);
     disp('*** SVM - linear ***');
-    svm_lab=svmpredict(labels_test,bof_test,model);
+    svm_lab=svmpredict(labels_test,test_pca,model);
     
     method_name='SVM linear';
     % Compute classification accuracy
@@ -575,8 +575,8 @@ end
 
 if do_svm_precomp_linear_classification
     % compute kernel matrix
-    Ktrain = bof_train*bof_train';
-    Ktest = bof_test*bof_train';
+    Ktrain = train_pca*train_pca';
+    Ktest = test_pca*train_pca';
 
     % cross-validation
     C_vals=log2space(7,10,5);
@@ -672,8 +672,8 @@ end
 
 if do_svm_chi2_classification    
     % compute kernel matrix
-    Ktrain = kernel_expchi2(bof_train,bof_train);
-    Ktest = kernel_expchi2(bof_test,bof_train);
+    Ktrain = kernel_expchi2(train_pca,train_pca);
+    Ktest = kernel_expchi2(test_pca,train_pca);
     
     % cross-validation
     C_vals=log2space(2,10,5);

@@ -2,8 +2,6 @@ function [trainLBP,testLBP] = lpb_extraction(data,num_classes,num_istance_per_cl
     
     trainLBP_ = cell(num_classes,num_istance_per_class_train);
     testLBP_ = cell(num_classes,num_instance_per_class_test);
-    %trainLBP = zeros(num_classes*num_istance_per_class_train,1);
-    %testLBP = zeros(num_classes * num_instance_per_class_test,1);
 
     for i = 1 : length(data)
         disp(length(data))

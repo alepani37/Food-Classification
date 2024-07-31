@@ -24,7 +24,7 @@ do_resizeimage = 1;
 
 dd = dir(fullfile(im_dir,'*.jpg'));
 if nargin < 3
-    scales = [32];
+    scales = [16 24 32 48];
 else
     scales = cell2mat(varargin(1));
 end

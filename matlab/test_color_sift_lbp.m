@@ -48,7 +48,7 @@ do_feat_quantization = 1;
 do_L2_NN_classification = 0;
 do_chi2_NN_classification = 0;
 do_svm_linar_classification = 1;
-do_svm_llc_linar_classification = 1;
+do_svm_llc_linar_classification = 0;
 do_svm_precomp_linear_classification = 1;
 do_svm_inter_classification = 1;
 do_svm_chi2_classification = 1;
@@ -469,7 +469,30 @@ if do_svm_llc_linar_classification
     llc_train = cat(1,desc_train.llc);
     llc_test = cat(1,desc_test.llc);
 end
+%% %% 
+%%Compute  LBP for each image
+
+%definition about path information
+info.base = basepath;
+info.first = "img";
+info.dsdir = dataset_dir;
+info.desc_name = desc_name;
+[trainLBP,testLBP] = lbp_color_extraction(data,length(classes),num_train_img,num_test_img,info);
+for i = 1 : size(trainLBP,2)
+    trainLBP(i).hist = double(trainLBP(i).hist);
+end
+
+for i = 1 : size(testLBP,2)
+    testLBP(i).hist = double(testLBP(i).hist);
+end
+
 %% 
+f_train=cat(1,trainLBP.hist);
+f_test=cat(1,testLBP.hist);
+%% 
+
+new_bof_train = [bof_train,f_train];
+new_bof_test = [bof_test,f_test];
 
 %% 
 % Construct label Concatenate bof-histograms into training and test matrices 
@@ -481,8 +504,8 @@ labels_test=cat(1,desc_test.class);
 
 if do_svm_precomp_linear_classification
     % compute kernel matrix
-    Ktrain = bof_train*bof_train';
-    Ktest = bof_test*bof_train';
+    Ktrain = new_bof_train*new_bof_train';
+    Ktest = new_bof_test*new_bof_train';
 
     % cross-validation
     C_vals=log2space(7,10,5);
@@ -526,15 +549,15 @@ if do_svm_linar_classification
     C_vals=log2space(7,10,5);
     for i=1:length(C_vals);
         opt_string=['-t 0  -v 5 -c ' num2str(C_vals(i))];
-        xval_acc(i)=svmtrain(labels_train,bof_train,opt_string);
+        xval_acc(i)=svmtrain(labels_train,new_bof_train,opt_string);
     end
     %select the best C among C_vals and test your model on the testing set.
     [v,ind]=max(xval_acc);
 
     % train the model and test
-    model=svmtrain(labels_train,bof_train,['-t 0 -c ' num2str(C_vals(ind))]);
+    model=svmtrain(labels_train,new_bof_train,['-t 0 -c ' num2str(C_vals(ind))]);
     disp('*** SVM - linear ***');
-    svm_lab=svmpredict(labels_test,bof_test,model);
+    svm_lab=svmpredict(labels_test,new_bof_test,model);
     
     method_name='SVM linear';
     % Compute classification accuracy
@@ -546,8 +569,8 @@ end
 %% 
 if do_svm_chi2_classification    
     % compute kernel matrix
-    Ktrain = kernel_expchi2(bof_train,bof_train);
-    Ktest = kernel_expchi2(bof_test,bof_train);
+    Ktrain = kernel_expchi2(new_bof_train,new_bof_train);
+    Ktest = kernel_expchi2(new_bof_test,new_bof_train);
     
     % cross-validation
     C_vals=log2space(2,10,5);

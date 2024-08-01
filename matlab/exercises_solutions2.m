@@ -37,7 +37,8 @@ dataset_dir = 'prova_resized_bn_2';
 % Harris-Laplace keypoints) or 'dsift' for dense features detection (SIFT
 % descriptors computed at a grid of overlapped patches
 
-desc_name = 'msdsift';
+desc_name = 'sift';
+%desc_name = 'msdsift';
 %desc_name = 'dsift';
 %desc_name = 'msdsift';
 %desc_name = 'color_sift';
@@ -45,31 +46,30 @@ desc_name = 'msdsift';
 % FLAGS
 do_feat_extraction = 1;
 do_split_sets = 1;
-do_show_logs = 1;
 do_form_codebook = 1;
 do_feat_quantization = 1;
 
-do_L2_NN_classification = 1;
+do_visualize_feat = 0;
+do_visualize_words = 0;
+do_visualize_confmat = 0;
+do_visualize_res = 0;
+do_have_screen = 0; %~isempty(getenv('DISPLAY'));
 
-do_visualize_feat = 1;
-do_visualize_words = 1;
-do_visualize_confmat = 1;
-do_visualize_res = 1;
-do_have_screen = 1; %~isempty(getenv('DISPLAY'));
+do_L2_NN_classification = 0;
 do_chi2_NN_classification = 0;
 
-do_svm_linar_classification = 1;
+do_svm_linar_classification = 0;
 do_svm_llc_linar_classification = 0;
-do_svm_precomp_linear_classification = 1;
-do_svm_inter_classification = 1;
+do_svm_precomp_linear_classification = 0;
+do_svm_inter_classification = 0;
 do_svm_chi2_classification = 1;
 
 visualize_feat = 0;
 visualize_words = 0;
-visualize_confmat = 1;
+visualize_confmat = 0;
 visualize_res = 0;
 %have_screen = ~isempty(getenv('DISPLAY'));
-have_screen = 1;
+have_screen = 0;
 % PATHS
 basepath = '..';
 wdir = pwd;
@@ -138,9 +138,9 @@ for i = 1:length(data) %per ogni categoria trovata
      images_descs = get_descriptors_files(data,i,file_ext,desc_name,'train'); %ex. 0001.dsift
      for j = 1:length(images_descs) 
         fname = fullfile(basepath,'img',dataset_dir,data(i).classname,images_descs{j});
-        if do_show_logs
-            fprintf('Loading %s \n',fname);
-        end
+        
+        fprintf('Loading %s \n',fname);
+        
         tmp = load(fname,'-mat');
         tmp.desc.class=i;
         tmp.desc.imgfname=regexprep(fname,['.' desc_name],'.jpg');

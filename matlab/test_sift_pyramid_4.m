@@ -52,18 +52,18 @@ do_feat_quantization = 1;
 
 do_L2_NN_classification = 0;
 do_chi2_NN_classification = 0;
-do_svm_linar_classification = 1;
+do_svm_linar_classification = 0;
 do_svm_llc_linar_classification = 0;
-do_svm_precomp_linear_classification = 1;
-do_svm_inter_classification = 1;
+do_svm_precomp_linear_classification = 0;
+do_svm_inter_classification = 0;
 do_svm_chi2_classification = 1;
 
 visualize_feat = 0;
 visualize_words = 0;
-visualize_confmat = 1;
-visualize_res = 1;
+visualize_confmat = 0;
+visualize_res = 0;
 %have_screen = ~isempty(getenv('DISPLAY'));
-have_screen = 1;
+have_screen = 0;
 
 % PATHS
 basepath = '..';
@@ -72,8 +72,8 @@ libsvmpath = [ wdir(1:end-6) fullfile('lib','libsvm-3.11','matlab')];
 addpath(libsvmpath)
 
 % BOW PARAMETERS
-max_km_iters = 900; % maximum number of iterations for k-means
-nfeat_codebook = 100000; % number of descriptors used by k-means for the codebook generation
+max_km_iters = 1000; % maximum number of iterations for k-means
+nfeat_codebook = 60000; % number of descriptors used by k-means for the codebook generation
 norm_bof_hist = 1;
 
 %%ROBA AGGIUNTA%%%%%%%
@@ -87,7 +87,7 @@ num_test_img = 30;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 1000;
 %NUmero massimo di immagini prendibili per ogni classe
-num_max_img_per_classe = 155;
+num_max_img_per_classe = 200;
 
 % image file extension
 file_ext='jpg';

@@ -30,7 +30,7 @@ clc;
 % DATASET
 %dataset_dir='garbage_classification'; %dataset_folder_name
 dataset_dir = 'ds';
-dataset_dir = 'prova_resized_bn_2';
+dataset_dir = 'prova_resized_2';
 
 % FEATURES extraction methods
 % 'sift' for sparse features detection (SIFT descriptors computed at  
@@ -40,7 +40,6 @@ dataset_dir = 'prova_resized_bn_2';
 desc_name = 'sift';
 %desc_name = 'msdsift';
 %desc_name = 'dsift';
-%desc_name = 'msdsift';
 %desc_name = 'color_sift';
 
 % FLAGS
@@ -139,7 +138,7 @@ for i = 1:length(data) %per ogni categoria trovata
      for j = 1:length(images_descs) 
         fname = fullfile(basepath,'img',dataset_dir,data(i).classname,images_descs{j});
         
-        fprintf('Loading %s \n',fname);
+        %fprintf('Loading %s \n',fname);
         
         tmp = load(fname,'-mat');
         tmp.desc.class=i;

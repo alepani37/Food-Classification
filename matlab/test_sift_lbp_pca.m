@@ -29,6 +29,7 @@ close all;
 clc;
 % DATASET
 dataset_dir = 'ds';
+dataset_dir = 'prova_resized_bn_2';
 
 % FEATURES extraction methods
 % 'sift' for sparse features detection (SIFT descriptors computed at  
@@ -76,17 +77,17 @@ addpath(libsvmpath)
 
 % BOW PARAMETERS
 max_km_iters = 1500; % maximum number of iterations for k-means
-nfeat_codebook = 100000; % number of descriptors used by k-means for the codebook generation
+nfeat_codebook = 60000; % number of descriptors used by k-means for the codebook generation
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 180; %numero per ogni classe
+num_train_img = 170; %numero per ogni classe
 % number of images selected for test (e.g. 50 for Caltech-101)
-num_test_img = 20;  %numero per ogni classe
+num_test_img = 30;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
-nwords_codebook = 500;
+nwords_codebook = 1000;
 %NUmero massimo di immagini prendibili per ogni classe
-num_max_img_per_classe = 205;
+num_max_img_per_classe = 200;
 
 % image file extension
 file_ext='jpg';

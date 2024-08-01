@@ -22,12 +22,15 @@
 %                                                                         %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %run('path_to_vlfeat/vlfeat-0.9.21/toolbox/vl_setup');
-clc
+clear;
+close all;
+clc;
 
 % DATASET
 %dataset_dir='4_ObjectCategories';
 %dataset_dir = '15_ObjectCategories';
 dataset_dir = 'ds';
+dataset_dir = 'prova_resized_bn_2';
 
 % FEATURES extraction methods
 % 'sift' for sparse features detection (SIFT descriptors computed at
@@ -75,18 +78,16 @@ norm_bof_hist = 1;
 
 %%ROBA AGGIUNTA%%%%%%%
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 100; %numero per ogni classe
+num_train_img = 150; %numero per ogni classe
 
 %number of images selected fo validation
-num_val_img = 30;
+num_val_img = 20;
 % number of images selected for test (e.g. 50 for Caltech-101)
-num_test_img = 20;  %numero per ogni classe
+num_test_img = 30;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
-nwords_codebook = 500;
+nwords_codebook = 1000;
 %NUmero massimo di immagini prendibili per ogni classe
 num_max_img_per_classe = 155;
-% number of codewords (i.e. K for the k-means algorithm)
-nwords_codebook = 500;
 
 % image file extension
 file_ext='jpg';

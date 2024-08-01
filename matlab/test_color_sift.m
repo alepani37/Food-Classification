@@ -23,12 +23,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %run('path_to_vlfeat/vlfeat-0.9.21/toolbox/vl_setup');
 
-%clear;
-%close all;
+clear;
+close all;
+clc;
 % DATASET
 %dataset_dir='4_ObjectCategories';
 %dataset_dir = '15_ObjectCategories';
 dataset_dir = 'ds';
+dataset_dir = 'prova_resized_bn_2';
 
 % FEATURES extraction methods
 % 'sift' for sparse features detection (SIFT descriptors computed at
@@ -66,20 +68,20 @@ libsvmpath = [ wdir(1:end-6) fullfile('lib','libsvm-3.11','matlab')];
 addpath(libsvmpath)
 
 % BOW PARAMETERS
-max_km_iters = 150; % maximum number of iterations for k-means
+max_km_iters = 1500; % maximum number of iterations for k-means
 nfeat_codebook = 60000; % number of descriptors used by k-means for the codebook generation
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 180; %numero per ogni classe
+num_train_img = 150; %numero per ogni classe
 %number of images selected for validation
-num_val_img = 30;
+num_val_img = 20;
 % number of images selected for test (e.g. 50 for Caltech-101)
-num_test_img = 20;  %numero per ogni classe
+num_test_img = 30;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 1000;
 %NUmero massimo di immagini prendibili per ogni classe
-num_max_img_per_classe = 235;
+num_max_img_per_classe = 200;
 
 % image file extension
 file_ext='jpg';

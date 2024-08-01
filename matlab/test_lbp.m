@@ -1,9 +1,11 @@
 %% clear;
+clear;
 close all;
 clc;
 % DATASET
 %dataset_dir='food'; %dataset_folder_name
 dataset_dir='prova_resized'; %dataset_folder_name
+dataset_dir = 'prova_resized_bn_2';
 %dataset_dir = '4_ObjectCategories';
 
 % FEATURES extraction methods
@@ -44,18 +46,18 @@ libsvmpath = [ wdir(1:end-6) fullfile('lib','libsvm-3.11','matlab')];
 addpath(libsvmpath)
 
 % BOW PARAMETERS
-max_km_iters = 150; % maximum number of iterations for k-means
+max_km_iters = 1500; % maximum number of iterations for k-means
 nfeat_codebook = 60000; % number of descriptors used by k-means for the codebook generation
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 100; %numero per ogni classe
+num_train_img = 170; %numero per ogni classe
 % number of images selected for test (e.g. 50 for Caltech-101)
-num_test_img = 20;  %numero per ogni classe
+num_test_img = 30;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
-nwords_codebook = 500;
+nwords_codebook = 1000;
 %NUmero massimo di immagini prendibili per ogni classe
-num_max_img_per_classe = 140;
+num_max_img_per_classe = 200;
 
 % image file extension
 file_ext='jpg';

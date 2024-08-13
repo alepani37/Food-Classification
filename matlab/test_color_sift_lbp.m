@@ -30,7 +30,7 @@ clc;
 %dataset_dir='4_ObjectCategories';
 %dataset_dir = '15_ObjectCategories';
 dataset_dir = 'ds';
-dataset_dir = 'prova_resized_bn_2';
+%dataset_dir = 'prova_resized_bn_2';
 
 % FEATURES extraction methods
 % 'sift' for sparse features detection (SIFT descriptors computed at
@@ -49,10 +49,10 @@ do_feat_quantization = 1;
 
 do_L2_NN_classification = 0;
 do_chi2_NN_classification = 0;
-do_svm_linar_classification = 0;
+do_svm_linar_classification = 1;
 do_svm_llc_linar_classification = 0;
-do_svm_precomp_linear_classification = 0;
-do_svm_inter_classification = 0;
+do_svm_precomp_linear_classification = 1;
+do_svm_inter_classification = 1;
 do_svm_chi2_classification = 1;
 
 visualize_feat = 0;
@@ -69,7 +69,7 @@ addpath(libsvmpath)
 
 % BOW PARAMETERS
 max_km_iters = 1500; % maximum number of iterations for k-means
-nfeat_codebook = 60000; % number of descriptors used by k-means for the codebook generation
+nfeat_codebook = 280000; % number of descriptors used by k-means for the codebook generation
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
@@ -79,7 +79,7 @@ num_val_img = 20;
 % number of images selected for test (e.g. 50 for Caltech-101)
 num_test_img = 30;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
-nwords_codebook = 1000;
+nwords_codebook = 1200;
 %NUmero massimo di immagini prendibili per ogni classe
 num_max_img_per_classe = 200;
 
@@ -234,13 +234,13 @@ if do_form_codebook
 
 
     end
+%% 
 
     % sample random M (e.g. M=20,000) descriptors from all training descriptors
     r = randperm(size(DESC,1));
     r = r(1:min(length(r),nfeat_codebook));
 
     DESC = DESC(r,:);
-
     % run k-means
     K = nwords_codebook; % size of visual vocabulary
     fprintf('running k-means clustering of %d points into %d clusters...\n',...

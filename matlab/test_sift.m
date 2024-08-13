@@ -29,16 +29,16 @@ close all;
 clc;
 % DATASET
 dataset_dir = 'ds';
-dataset_dir = 'prova_resized_bn_2';
+%dataset_dir = 'prova_resized_bn_2';
 
 % FEATURES extraction methods
 % 'sift' for sparse features detection (SIFT descriptors computed at  
 % Harris-Laplace keypoints) or 'dsift' for dense features detection (SIFT
 % descriptors computed at a grid of overlapped patches
 
-desc_name = 'msdsift';
-%desc_name = 'dsift';
 %desc_name = 'msdsift';
+%desc_name = 'dsift';
+desc_name = 'sift';
 
 % FLAGS
 do_feat_extraction = 1;
@@ -49,23 +49,23 @@ do_feat_quantization = 1;
 
 do_visualize_feat = 0;
 do_visualize_words = 0;
-do_visualize_confmat = 0;
+do_visualize_confmat = 1;
 do_visualize_res = 0;
-do_have_screen = 0;
+do_have_screen = 1;
 
 do_chi2_NN_classification = 0;
 do_L2_NN_classification = 0;
-do_svm_llc_linar_classification = 0;
-do_svm_linar_classification = 0;
-do_svm_precomp_linear_classification = 0;
-do_svm_inter_classification = 0;
+do_svm_llc_linar_classification = 1;
+do_svm_linar_classification = 1;
+do_svm_precomp_linear_classification = 1;
+do_svm_inter_classification = 1;
 do_svm_chi2_classification = 1;
 
 visualize_feat = 0;
 visualize_words = 0;
-visualize_confmat = 0;
+visualize_confmat = 1;
 visualize_res = 0;
-have_screen = 0;
+have_screen = 1;
 % PATHS
 basepath = '..';
 wdir = pwd;
@@ -74,7 +74,7 @@ addpath(libsvmpath)
 
 % BOW PARAMETERS
 max_km_iters = 1500; % maximum number of iterations for k-means
-nfeat_codebook = 60000; % number of descriptors used by k-means for the codebook generation
+nfeat_codebook = 80000; % number of descriptors used by k-means for the codebook generation
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
@@ -82,7 +82,7 @@ num_train_img = 170; %numero per ogni classe
 % number of images selected for test (e.g. 50 for Caltech-101)
 num_test_img = 30;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
-nwords_codebook = 1000;
+nwords_codebook = 1500;
 %NUmero massimo di immagini prendibili per ogni classe
 num_max_img_per_classe = 200;
 

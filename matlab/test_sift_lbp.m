@@ -30,7 +30,7 @@ clc;
 % DATASET
 %dataset_dir='garbage_classification'; %dataset_folder_name
 dataset_dir = 'ds';
-dataset_dir = 'prova_resized_bn_2';
+%dataset_dir = 'prova_resized_bn_2';
 
 % FEATURES extraction methods
 % 'sift' for sparse features detection (SIFT descriptors computed at  
@@ -58,10 +58,10 @@ do_have_screen = 0; %~isempty(getenv('DISPLAY'));
 do_L2_NN_classification = 0;
 do_chi2_NN_classification = 0;
 
-do_svm_linar_classification = 0;
+do_svm_linar_classification = 1;
 do_svm_llc_linar_classification = 0;
-do_svm_precomp_linear_classification = 0;
-do_svm_inter_classification = 0;
+do_svm_precomp_linear_classification = 1;
+do_svm_inter_classification = 1;
 do_svm_chi2_classification = 1;
 
 visualize_feat = 0;
@@ -78,7 +78,7 @@ addpath(libsvmpath)
 
 % BOW PARAMETERS
 max_km_iters = 1500; % maximum number of iterations for k-means
-nfeat_codebook = 60000; % number of descriptors used by k-means for the codebook generation
+nfeat_codebook = 120000; % number of descriptors used by k-means for the codebook generation
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
@@ -86,7 +86,7 @@ num_train_img = 170; %numero per ogni classe
 % number of images selected for test (e.g. 50 for Caltech-101)
 num_test_img = 30;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
-nwords_codebook = 1000;
+nwords_codebook = 1500;
 %NUmero massimo di immagini prendibili per ogni classe
 num_max_img_per_classe = 200;
 
@@ -216,13 +216,18 @@ if do_form_codebook
         DESC = vertcat(DESC,desc_class(randimages).sift);
         %a caso vengono prese le sift di 
     end
+%% 
 
     % sample random M (e.g. M=20,000) descriptors from all training descriptors
     r = randperm(size(DESC,1));
+
+    %% 
+
     r = r(1:min(length(r),nfeat_codebook));
 
     DESC = DESC(r,:);
-
+    %% 
+    
     % run k-means
     K = nwords_codebook; % size of visual vocabulary
     fprintf('running k-means clustering of %d points into %d clusters...\n',...
@@ -271,7 +276,7 @@ if do_feat_quantization
     for i=1:length(desc_train)  
       sift = desc_train(i).sift(:,:);
       dmat = eucliddist(sift,VC); %distanza euclidea in 128-dimensioni
-      %dmat mi dice la distanza del descrittore del keypoint da ogni
+      %dmat mi dice la distanza del des crittore del keypoint da ogni
       %keyword.
       [quantdist,visword] = min(dmat,[],2); %prendo keyword + vicina
       % save feature labels

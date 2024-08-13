@@ -51,7 +51,7 @@ norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 170; %numero per ogni classe
+num_train_img = 150; %numero per ogni classe
 
 %number of images selected fo validation
 num_val_img = 20;
@@ -60,7 +60,7 @@ num_test_img = 30;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 1200;
 %NUmero massimo di immagini prendibili per ogni classe
-num_max_img_per_classe = 225;
+num_max_img_per_classe = 200;
 
 % image file extension
 file_ext='jpg';
@@ -71,7 +71,6 @@ if do_split_sets
     data = create_dataset_split_structure_from_unbalanced_sets_val(...
         fullfile(basepath, 'img', dataset_dir), ... 
         num_train_img, ...
-        num_val_img,...
         num_test_img , ...
         file_ext, ...
         num_max_img_per_classe); %numero di immagini massimo da considerare per classe
@@ -99,15 +98,11 @@ info.base = basepath;
 info.first = "img";
 info.dsdir = dataset_dir;
 info.desc_name = desc_name;
-[trainLBP,valLBP,testLBP] = lbp_val_extraction(data,length(classes),num_train_img,num_val_img,num_test_img,info);
+[trainLBP,valLBP,testLBP] = lbp_val_extraction(data,length(classes),num_train_img,num,num_test_img,info);
 disp("Parametri LBP estratti correttamente")
 %% % Concatenate bof-histograms into training and test matrices 
 for i = 1 : size(trainLBP,2)
     trainLBP(i).hist = double(trainLBP(i).hist);
-end
-
-for i = 1 : size(valLBP,2)
-    valLBP(i).hist = double(valLBP(i).hist);
 end
 
 for i = 1 : size(testLBP,2)
@@ -115,14 +110,12 @@ for i = 1 : size(testLBP,2)
 end
 
 f_train=cat(1,trainLBP.hist);
-f_val = cat(1,valLBP.hist);
 f_test=cat(1,testLBP.hist);
 
 
 
 % Construct label Concatenate bof-histograms into training and test matrices 
 labels_train=cat(1,trainLBP.class);
-labels_val = cat(1,valLBP.class);
 labels_test=cat(1,testLBP.class);
 %% 
 if do_L2_NN_classification
@@ -282,21 +275,11 @@ end
 
 %% 4.3 & 4.4: CHI-2 KERNEL (pre-compute kernel) %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if do_svm_chi2_classification
-
-    fprintf('\n%%%%%%%%%% COMPUTE KERNELS  %%%%%%%%%%%%%%%');
-
-    
+if do_svm_chi2_classification    
     % compute kernel matrix
     Ktrain = kernel_expchi2(f_train,f_train);
     Ktest = kernel_expchi2(f_test,f_train);
-    Kval = kernel_expchi2(f_val,f_train);
     
-
-   
-    % Compute the chi-squared kernel matrix
-    
-    fprintf('\n%%%%%%%%%% TRAINING THE MODEL  %%%%%%%%%%%%%%%');
     % cross-validation
     C_vals=log2space(2,10,5);
     for i=1:length(C_vals);
@@ -307,28 +290,17 @@ if do_svm_chi2_classification
 
     % train the model and test
     model=svmtrain(labels_train,[(1:size(Ktrain,1))' Ktrain],['-t 4 -c ' num2str(C_vals(ind))] );
-    % we supply the missing scalar product (actually the values of non-support vectors could be left as zeros....
+    % we supply the missing scalar product (actually the values of non-support vectors could be left as zeros.... 
     % consider this if the kernel is computationally inefficient.
     disp('*** SVM - Chi2 kernel ***');
-    [precomp_chi2_svm_lab_test,conf]=svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
-    [precomp_chi2_svm_lab_val,conf]=svmpredict(labels_val,[(1:size(Kval,1))' Kval],model);
-    [precomp_chi2_svm_lab_train,conf]=svmpredict(labels_train,[(1:size(Ktrain,1))' Ktrain],model);
-
-    method_name="SVM Chi2";
-    compute_accuracy_lbp(data,labels_train,precomp_chi2_svm_lab_train,classes,method_name,trainLBP,...
-        visualize_confmat & have_screen,...
-        visualize_res & have_screen);
-    compute_accuracy_lbp(data,labels_val,precomp_chi2_svm_lab_val,classes,method_name,valLBP,...
-        visualize_confmat & have_screen,...
-        visualize_res & have_screen);
-    compute_accuracy_lbp(data,labels_test,precomp_chi2_svm_lab_test,classes,method_name,testLBP,...
-        visualize_confmat & have_screen,...
-        visualize_res & have_screen);
-    %methods_name(end+1) = method_name + ' k=' + nwords_codebook;
-    %bar_values(end+1, :) = [acc_SVM_CHI2_train,acc_SVM_CHI2_val,acc_SVM_CHI2_test];
-
+    [precomp_chi2_svm_lab,conf]=svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
+    
+    method_name='SVM Chi2';
+    % Compute classification accuracy
+    compute_accuracy(data,labels_test,precomp_chi2_svm_lab,classes,method_name,testLBP,...
+                      0,... 
+                      0);
 end
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   End of EXERCISE 4.3 and 4.4                                           %

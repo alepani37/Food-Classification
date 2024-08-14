@@ -46,7 +46,6 @@ desc_name = 'sift_pyramid';
 % FLAGS
 do_feat_extraction = 1;
 do_split_sets = 1;
-
 do_form_codebook = 1;
 do_feat_quantization = 1;
 

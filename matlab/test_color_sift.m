@@ -466,7 +466,7 @@ end
 %%ultmo scritto
 bof_train=cat(1,desc_train.bof);
 bof_test=cat(1,desc_test.bof);
-bof_val=cat(1,desc_val_bof);
+bof_val=cat(1,desc_val.bof);
 if do_svm_llc_linar_classification
     llc_train = cat(1,desc_train.llc);
     llc_test = cat(1,desc_test.llc);
@@ -585,7 +585,7 @@ if 0 %do_svm_chi2_classification
                       visualize_res & have_screen);
 end
 
-%% Versione molto differente
+%% Versione molto differente (test di filippo)
 if 1 %do_svm_chi2_classification    
     % compute kernel matrix
 

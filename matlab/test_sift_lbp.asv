@@ -449,7 +449,7 @@ if do_svm_llc_linar_classification
     for i=1:length(desc_val) 
         disp(desc_val(i).imgfname);
         desc_val(i).llc = max(LLC_coding_appr(VC,desc_val(i).sift));
-        desc_val(i).llc=desc_val(i).llc/norm(desc_val(i).llc);
+        desc_val(i).llc=desc_val(i).llc/norm(desc_test(i).llc);
     end
 end
 %%%%end LLC coding
@@ -466,22 +466,18 @@ bof_train=cat(1,desc_train.bof);
 bof_test=cat(1,desc_test.bof);
 f_train=cat(1,trainLBP.hist);
 f_test=cat(1,testLBP.hist);
-f_val = cat(1, valLBP.hist);
 if do_svm_llc_linar_classification
     llc_train = cat(1,desc_train.llc);
     llc_test = cat(1,desc_test.llc);
-    llc_val = cat(1, desc_test.llc);
 end
 
 
 % Construct label Concatenate bof-histograms into training and test matrices 
 labels_train=cat(1,desc_train.class);
 labels_test=cat(1,desc_test.class);
-labels_val=cat(1,desc_val(:,1).class);
 
 new_bof_train = [bof_train,f_train];
 new_bof_test = [bof_test,f_test];
-new_bof_val = [bof_val,f_val];
 
 
 %% NN classification %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -725,12 +721,11 @@ end
 
 
 %% 4.3 & 4.4: CHI-2 KERNEL (pre-compute kernel) %%%%%%%%%%%%%%%%%%%%%%%%%%%
-%aggiornato al validation set
+
 if do_svm_chi2_classification    
     % compute kernel matrix
     Ktrain = kernel_expchi2(new_bof_train,new_bof_train);
     Ktest = kernel_expchi2(new_bof_test,new_bof_train);
-    Kval = kernel_expchi2(new_bof_val,new_bof_train);
     
     % cross-validation
     C_vals=log2space(2,10,5);
@@ -744,20 +739,12 @@ if do_svm_chi2_classification
     model=svmtrain(labels_train,[(1:size(Ktrain,1))' Ktrain],['-t 4 -c ' num2str(C_vals(ind))] );
     % we supply the missing scalar product (actually the values of non-support vectors could be left as zeros.... 
     % consider this if the kernel is computationally inefficient.
-    disp('*** SVM - Chi2 kernel (test set)***');
-    [precomp_chi2_svm_lab_test,conf_test]=svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
+    disp('*** SVM - Chi2 kernel ***');
+    [precomp_chi2_svm_lab,conf]=svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
+    
     method_name='SVM Chi2';
     % Compute classification accuracy
-    compute_accuracy(data,labels_test,precomp_chi2_svm_lab_test,classes,method_name,desc_test,...
-                      do_visualize_confmat & do_have_screen,... 
-                      do_visualize_res & do_have_screen);
-
-
-    disp('*** SVM - Chi2 kernel (validation set) ***');
-    [precomp_chi2_svm_lab_val,conf_val]=svmpredict(labels_val,[(1:size(Kval,1))' Kval],model);
-    method_name='SVM Chi2';
-    % Compute classification accuracy
-    compute_accuracy(data,labels_val,precomp_chi2_svm_lab_val,classes,method_name,desc_val,...
+    compute_accuracy(data,labels_test,precomp_chi2_svm_lab,classes,method_name,desc_test,...
                       do_visualize_confmat & do_have_screen,... 
                       do_visualize_res & do_have_screen);
 end

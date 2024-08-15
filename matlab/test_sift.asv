@@ -28,7 +28,6 @@ clear;
 close all;
 clc;
 % DATASET
-%dataset_dir='garbage_classification'; %dataset_folder_name
 dataset_dir = 'ds';
 %dataset_dir = 'prova_resized_bn_2';
 
@@ -37,10 +36,9 @@ dataset_dir = 'ds';
 % Harris-Laplace keypoints) or 'dsift' for dense features detection (SIFT
 % descriptors computed at a grid of overlapped patches
 
-%desc_name = 'sift';
+%desc_name = 'msdsift';
 %desc_name = 'dsift';
-desc_name = 'msdsift';
-%desc_name = 'color_sift';
+desc_name = 'sift';
 
 % FLAGS
 do_feat_extraction = 1;
@@ -50,15 +48,14 @@ do_feat_quantization = 1;
 
 do_visualize_feat = 0;
 do_visualize_words = 0;
-do_visualize_confmat = 0;
+do_visualize_confmat = 1;
 do_visualize_res = 0;
-do_have_screen = 0; %~isempty(getenv('DISPLAY'));
+do_have_screen = 1;
 
-do_L2_NN_classification = 0;
 do_chi2_NN_classification = 0;
-
-do_svm_linar_classification = 0;
+do_L2_NN_classification = 0;
 do_svm_llc_linar_classification = 0;
+do_svm_linar_classification = 0;
 do_svm_precomp_linear_classification = 0;
 do_svm_inter_classification = 0;
 do_svm_chi2_classification = 1;
@@ -67,7 +64,6 @@ visualize_feat = 0;
 visualize_words = 0;
 visualize_confmat = 0;
 visualize_res = 0;
-%have_screen = ~isempty(getenv('DISPLAY'));
 have_screen = 0;
 % PATHS
 basepath = '..';
@@ -77,15 +73,15 @@ addpath(libsvmpath)
 
 % BOW PARAMETERS
 max_km_iters = 1500; % maximum number of iterations for k-means
-nfeat_codebook = 120000; % number of descriptors used by k-means for the codebook generation
+nfeat_codebook = 80000; % number of descriptors used by k-means for the codebook generation
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 170; %numero per ogni classe
-% number of images selected for test (e.g. 50 for Caltech-101)
-num_test_img = 30;  %numero per ogni classe
+num_train_img = 150; %numero per ogni classe
 %number of images selected for validation
 num_val_img = 20;
+% number of images selected for test (e.g. 50 for Caltech-101)
+num_test_img = 30;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 1500;
 %NUmero massimo di immagini prendibili per ogni classe
@@ -100,7 +96,7 @@ if do_split_sets
     data = create_dataset_split_structure_from_unbalanced_sets_val(...
         fullfile(basepath, 'img', dataset_dir), ... 
         num_train_img, ...
-        num_val_img, ...
+        num_val_img,...
         num_test_img , ...
         file_ext, ...
         num_max_img_per_classe); %numero di immagini massimo da considerare per classe
@@ -123,26 +119,6 @@ disp("Estrazione delle feature SIFT completata correttamente")
 %%%%%%%%%%%%%%%%% Part 1: quantize pre-computed image features %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% 
-%%Compute  LBP for each image
-
-%definition about path information
-info.base = basepath;
-info.first = "img";
-info.dsdir = dataset_dir;
-info.desc_name = desc_name;
-[trainLBP,valLBP, testLBP] = lbp_val_extraction(data,length(classes),num_train_img, num_val_img, num_test_img, info);
-for i = 1 : size(trainLBP,2)
-    trainLBP(i).hist = double(trainLBP(i).hist);
-end
-
-for i = 1 : size(testLBP,2)
-    testLBP(i).hist = double(testLBP(i).hist);
-end
-
-for i = 1 : size(valLBP,2)
-    valLBP(i).hist = double(valLBP(i).hist);
-end
 
 
 %% Load pre-computed SIFT features for training images (OBL)
@@ -160,9 +136,9 @@ for i = 1:length(data) %per ogni categoria trovata
      images_descs = get_descriptors_files_val(data,i,file_ext,desc_name,'train'); %ex. 0001.dsift
      for j = 1:length(images_descs) 
         fname = fullfile(basepath,'img',dataset_dir,data(i).classname,images_descs{j});
-        if do_show_logs
-            fprintf('Loading %s \n',fname);
-        end
+        
+        fprintf('Loading %s \n',fname);
+        
         tmp = load(fname,'-mat');
         tmp.desc.class=i;
         tmp.desc.imgfname=regexprep(fname,['.' desc_name],'.jpg');
@@ -172,7 +148,7 @@ for i = 1:length(data) %per ogni categoria trovata
     end;
 end;
 %% Visualize SIFT features for training images
-if 1 %(do_visualize_feat && do_have_screen)
+if (do_visualize_feat && do_have_screen)
     nti=2;
     fprintf('\nVisualize features for %d training images\n', nti);
     imgind=randperm(length(desc_train));
@@ -206,7 +182,7 @@ for i = 1:length(data)
     end;
 end;
 
-%% Load pre-computed SIFT features for validation images (OBL)
+%% Load pre-computed SIFT features for validation images
 
 lasti=1;
 for i = 1:length(data)
@@ -223,7 +199,6 @@ for i = 1:length(data)
     end;
 end;
 
-
 %% Build visual vocabulary using k-means (OBL) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if do_form_codebook
@@ -239,18 +214,13 @@ if do_form_codebook
         DESC = vertcat(DESC,desc_class(randimages).sift);
         %a caso vengono prese le sift di 
     end
-%% 
 
     % sample random M (e.g. M=20,000) descriptors from all training descriptors
     r = randperm(size(DESC,1));
-
-    %% 
-
     r = r(1:min(length(r),nfeat_codebook));
 
     DESC = DESC(r,:);
-    %% 
-    
+
     % run k-means
     K = nwords_codebook; % size of visual vocabulary
     fprintf('running k-means clustering of %d points into %d clusters...\n',...
@@ -299,7 +269,7 @@ if do_feat_quantization
     for i=1:length(desc_train)  
       sift = desc_train(i).sift(:,:);
       dmat = eucliddist(sift,VC); %distanza euclidea in 128-dimensioni
-      %dmat mi dice la distanza del des crittore del keypoint da ogni
+      %dmat mi dice la distanza del descrittore del keypoint da ogni
       %keyword.
       [quantdist,visword] = min(dmat,[],2); %prendo keyword + vicina
       % save feature labels
@@ -334,7 +304,7 @@ end
 %  To visually verify feature quantization computed above, we can show 
 %  image patches corresponding to the same visual word. 
 
-if 1 %(do_visualize_words && do_have_screen)
+if (do_visualize_words && do_have_screen)
     figure;
     %num_words = size(VC,1) % loop over all visual word types
     num_words = 5;
@@ -414,7 +384,6 @@ for i=1:length(desc_test)
     desc_test(i).bof=H(:)';
 end
 
-
 for i=1:length(desc_val) 
     visword = desc_val(i).visword;
     H = histc(visword,[1:nwords_codebook]);
@@ -464,9 +433,7 @@ end
 % Concatenate bof-histograms into training and test matrices 
 bof_train=cat(1,desc_train.bof);
 bof_test=cat(1,desc_test.bof);
-f_train=cat(1,trainLBP.hist);
-f_test=cat(1,testLBP.hist);
-f_val = cat(1, valLBP.hist);
+bof_val=cat(1,desc_val.bof);
 if do_svm_llc_linar_classification
     llc_train = cat(1,desc_train.llc);
     llc_test = cat(1,desc_test.llc);
@@ -477,11 +444,6 @@ end
 % Construct label Concatenate bof-histograms into training and test matrices 
 labels_train=cat(1,desc_train.class);
 labels_test=cat(1,desc_test.class);
-labels_val=cat(1,desc_val(:,1).class);
-
-new_bof_train = [bof_train,f_train];
-new_bof_test = [bof_test,f_test];
-new_bof_val = [bof_val,f_val];
 
 
 %% NN classification %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -573,7 +535,7 @@ if do_svm_linar_classification
     C_vals=log2space(7,10,5);
     for i=1:length(C_vals);
         opt_string=['-t 0  -v 5 -c ' num2str(C_vals(i))];
-        xval_acc(i)=svmtrain(labels_train,new_bof_train,opt_string);
+        xval_acc(i)=svmtrain(labels_train,bof_train,opt_string);
     end
     %select the best C among C_vals and test your model on the testing set.
     [v,ind]=max(xval_acc);
@@ -581,7 +543,7 @@ if do_svm_linar_classification
     % train the model and test
     model=svmtrain(labels_train,bof_train,['-t 0 -c ' num2str(C_vals(ind))]);
     disp('*** SVM - linear ***');
-    svm_lab=svmpredict(labels_test,new_bof_test,model);
+    svm_lab=svmpredict(labels_test,bof_test,model);
     
     method_name='SVM linear';
     % Compute classification accuracy
@@ -631,8 +593,8 @@ end
 
 if do_svm_precomp_linear_classification
     % compute kernel matrix
-    Ktrain = new_bof_train*new_bof_train';
-    Ktest = new_bof_test*new_bof_train';
+    Ktrain = bof_train*bof_train';
+    Ktest = bof_test*bof_train';
 
     % cross-validation
     C_vals=log2space(7,10,5);
@@ -681,18 +643,18 @@ end
 % try a non-linear svm with the histogram intersection kernel!
 
 if do_svm_inter_classification
-    Ktrain=zeros(size(new_bof_train,1),size(new_bof_train,1));
-    for i=1:size(new_bof_train,1)
-        for j=1:size(new_bof_train,1)
-            hists = [new_bof_train(i,:);new_bof_train(j,:)];
+    Ktrain=zeros(size(bof_train,1),size(bof_train,1));
+    for i=1:size(bof_train,1)
+        for j=1:size(bof_train,1)
+            hists = [bof_train(i,:);bof_train(j,:)];
             Ktrain(i,j)=sum(min(hists));
         end
     end
 
-    Ktest=zeros(size(new_bof_test,1),size(new_bof_train,1));
-    for i=1:size(new_bof_test,1)
-        for j=1:size(new_bof_train,1)
-            hists = [new_bof_test(i,:);new_bof_train(j,:)];
+    Ktest=zeros(size(bof_test,1),size(bof_train,1));
+    for i=1:size(bof_test,1)
+        for j=1:size(bof_train,1)
+            hists = [bof_test(i,:);bof_train(j,:)];
             Ktest(i,j)=sum(min(hists));
         end
     end
@@ -725,13 +687,13 @@ end
 
 
 %% 4.3 & 4.4: CHI-2 KERNEL (pre-compute kernel) %%%%%%%%%%%%%%%%%%%%%%%%%%%
-%aggiornato al validation set
+%modificato per il validation set
 if do_svm_chi2_classification    
     % compute kernel matrix
-    Ktrain = kernel_expchi2(new_bof_train,new_bof_train);
-    Ktest = kernel_expchi2(new_bof_test,new_bof_train);
-    Kval = kernel_expchi2(new_bof_val,new_bof_train);
-    
+    Ktrain = kernel_expchi2(bof_train,bof_train);
+    Ktest = kernel_expchi2(bof_test,bof_train);
+    Kval = bof_val*bof_val';
+
     % cross-validation
     C_vals=log2space(2,10,5);
     for i=1:length(C_vals);
@@ -744,20 +706,12 @@ if do_svm_chi2_classification
     model=svmtrain(labels_train,[(1:size(Ktrain,1))' Ktrain],['-t 4 -c ' num2str(C_vals(ind))] );
     % we supply the missing scalar product (actually the values of non-support vectors could be left as zeros.... 
     % consider this if the kernel is computationally inefficient.
-    disp('*** SVM - Chi2 kernel (test set)***');
+    disp('*** SVM - Chi2 kernel ***');
     [precomp_chi2_svm_lab_test,conf_test]=svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
+    
     method_name='SVM Chi2';
     % Compute classification accuracy
-    compute_accuracy(data,labels_test,precomp_chi2_svm_lab_test,classes,method_name,desc_test,...
-                      do_visualize_confmat & do_have_screen,... 
-                      do_visualize_res & do_have_screen);
-
-
-    disp('*** SVM - Chi2 kernel (validation set) ***');
-    [precomp_chi2_svm_lab_val,conf_val]=svmpredict(labels_val,[(1:size(Kval,1))' Kval],model);
-    method_name='SVM Chi2';
-    % Compute classification accuracy
-    compute_accuracy(data,labels_val,precomp_chi2_svm_lab_val,classes,method_name,desc_val,...
+    compute_accuracy(data,labels_test,precomp_chi2_svm_lab,classes,method_name,desc_test,...
                       do_visualize_confmat & do_have_screen,... 
                       do_visualize_res & do_have_screen);
 end

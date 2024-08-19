@@ -47,6 +47,7 @@ do_feat_extraction = 1;
 do_split_sets = 1;
 do_form_codebook = 1;
 do_feat_quantization = 1;
+do_show_logs = 1;
 
 do_visualize_feat = 0;
 do_visualize_words = 0;
@@ -89,7 +90,7 @@ num_val_img = 20;
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 1500;
 %NUmero massimo di immagini prendibili per ogni classe
-num_max_img_per_classe = 200;
+num_max_img_per_classe = 221;
 
 % image file extension
 file_ext='jpg';
@@ -464,6 +465,7 @@ end
 % Concatenate bof-histograms into training and test matrices 
 bof_train=cat(1,desc_train.bof);
 bof_test=cat(1,desc_test.bof);
+bof_val = cat(1,desc_val.bof);
 f_train=cat(1,trainLBP.hist);
 f_test=cat(1,testLBP.hist);
 f_val = cat(1, valLBP.hist);
@@ -477,7 +479,7 @@ end
 % Construct label Concatenate bof-histograms into training and test matrices 
 labels_train=cat(1,desc_train.class);
 labels_test=cat(1,desc_test.class);
-labels_val=cat(1,desc_val(:,1).class);
+labels_val=cat(1,desc_val.class);
 
 new_bof_train = [bof_train,f_train];
 new_bof_test = [bof_test,f_test];

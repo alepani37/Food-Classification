@@ -692,7 +692,7 @@ if do_svm_chi2_classification
     % compute kernel matrix
     Ktrain = kernel_expchi2(bof_train,bof_train);
     Ktest = kernel_expchi2(bof_test,bof_train);
-    Kval = bof_val*bof_val';
+    Kval = kernel_expchi2(bof_val,bof_train);
 
     % cross-validation
     C_vals=log2space(2,10,5);

@@ -3,10 +3,7 @@ clear;
 close all;
 clc;
 % DATASET
-%dataset_dir='food'; %dataset_folder_name
 dataset_dir='ds'; %dataset_folder_name
-%dataset_dir = 'prova_resized_bn_2';
-%dataset_dir = '4_ObjectCategories';
 
 % FEATURES extraction methods
 % 'sift' for sparse features detection (SIFT descriptors computed at  
@@ -27,9 +24,9 @@ do_L2_NN_classification = 0;
 do_chi2_NN_classification = 0;
 do_svm_linar_classification = 1;
 do_svm_llc_linar_classification = 0;
-do_svm_precomp_linear_classification = 1;
-do_svm_inter_classification = 1;
-do_svm_chi2_classification = 1;
+do_svm_precomp_linear_classification = 0;
+do_svm_inter_classification = 0;
+do_svm_chi2_classification = 0;
 
 visualize_feat = 0;
 visualize_words = 0;

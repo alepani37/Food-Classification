@@ -50,9 +50,9 @@ do_L2_NN_classification = 0;
 do_chi2_NN_classification = 0;
 do_svm_linar_classification = 1;
 do_svm_llc_linar_classification = 0;
-do_svm_precomp_linear_classification = 1;
-do_svm_inter_classification = 1;
-do_svm_chi2_classification = 1;
+do_svm_precomp_linear_classification = 0;
+do_svm_inter_classification = 0;
+do_svm_chi2_classification = 0;
 
 visualize_feat = 0;
 visualize_words = 0;
@@ -598,7 +598,7 @@ if do_svm_chi2_classification
 end
 
 %% Versione molto differente (test di filippo da deprecare)
-if %do_svm_chi2_classification    
+if 0 %do_svm_chi2_classification    
     % compute kernel matrix
 
     % Calcolare le matrici di kernel precomputate

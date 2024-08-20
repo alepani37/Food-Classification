@@ -29,4 +29,11 @@ function [acc] = compute_accuracy_pyr(data,labels_test,labels_pred,classes,metho
         fprintf('Visualize NN L2-BoW classification results\n\n');
         visualize_results_pyr( classes, desc_test, labels_test, labels_pred );
     end
+
+    [macroF1, precision, recall, accuracy] = calculateMetrics(CMnorm, classes);
+    fprintf('OVERALL %s classification accuracy: %1.4f\n\n',method_name,accuracy);
+    fprintf('OVERALL %s classification precision: %1.4f\n\n',method_name,precision);
+    fprintf('OVERALL %s classification recall: %1.4f\n\n',method_name,recall);
+    fprintf('OVERALL %s classification macroF1: %1.4f\n\n',method_name,macroF1);
+    
 end

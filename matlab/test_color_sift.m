@@ -482,11 +482,11 @@ labels_val=cat(1,desc_val(:,1).class);
 
 %% 4.3 & 4.4: CHI-2 KERNEL (pre-compute kernel) %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if 0 %do_svm_precomp_linear_classification
+if do_svm_precomp_linear_classification
     % compute kernel matrix
     Ktrain = bof_train*bof_train';
     Ktest = bof_test*bof_train';
-    Kval = bof_val*bof_val';
+    Kval = bof_val*bof_train';
 
     % cross-validation
     C_vals=log2space(7,10,5);
@@ -501,15 +501,20 @@ if 0 %do_svm_precomp_linear_classification
     % we supply the missing scalar product (actually the values of 
     % non-support vectors could be left as zeros.... 
     % consider this if the kernel is computationally inefficient.
-    disp('*** SVM - precomputed linear kernel ***');
-    precomp_svm_lab=svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
-    
+    disp('*** SVM - precomputed linear kernel (test) ***');
+    precomp_svm_lab_test =svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
     method_name='SVM precomp linear';
     % Compute classification accuracy
-    compute_accuracy(data,labels_test,precomp_svm_lab,classes,method_name,desc_test,...
+    compute_accuracy(data,labels_test,precomp_svm_lab_test,classes,method_name,desc_test,...
                       visualize_confmat & have_screen,... 
                       visualize_res & have_screen);
     % result is the same??? must be!
+
+    disp('*** SVM - precomputed linear kernel (validation) ***');
+    precomp_svm_lab_val =svmpredict(labels_val,[(1:size(Kval,1))' Kval],model);
+    compute_accuracy(data,labels_val,precomp_svm_lab_val,classes,method_name,desc_val,...
+                      visualize_confmat & have_screen,... 
+                      visualize_res & have_screen);
 end
 
 
@@ -527,7 +532,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% 
-if 1 %do_svm_linar_classification
+if do_svm_linar_classification
     % cross-validation
     C_vals=log2space(7,10,5);
     for i=1:length(C_vals);
@@ -540,7 +545,7 @@ if 1 %do_svm_linar_classification
     % train the model and test
     model=svmtrain(labels_train,bof_train,['-t 0 -c ' num2str(C_vals(ind))]);
     
-    disp('*** SVM - linear (test set ***');
+    disp('*** SVM - linear (test set) ***');
     svm_lab=svmpredict(labels_test,bof_test,model);
     method_name='SVM linear';
     % Compute classification accuracy
@@ -548,7 +553,7 @@ if 1 %do_svm_linar_classification
                       visualize_confmat & have_screen,... 
                       visualize_res & have_screen);
 
-    disp('*** SVM - linear (validation set ***');
+    disp('*** SVM - linear (validation set) ***');
     svm_lab_val=svmpredict(labels_val,bof_val,model);
     method_name='SVM linear';
     % Compute classification accuracy
@@ -558,10 +563,11 @@ if 1 %do_svm_linar_classification
 end
 
 %%  Test per non usare svmtrain (risultati scarsi)
-if 0 %do_svm_chi2_classification    
+if do_svm_chi2_classification    
     % compute kernel matrix
     Ktrain = kernel_expchi2(bof_train,bof_train);
     Ktest = kernel_expchi2(bof_test,bof_train);
+    Kval = kernel_expchi2(bof_val,bof_train);
     
     % cross-validation
     C_vals=log2space(2,10,5);
@@ -575,18 +581,24 @@ if 0 %do_svm_chi2_classification
     model=svmtrain(labels_train,[(1:size(Ktrain,1))' Ktrain],['-t 4 -c ' num2str(C_vals(ind))] );
     % we supply the missing scalar product (actually the values of non-support vectors could be left as zeros.... 
     % consider this if the kernel is computationally inefficient.
-    disp('*** SVM - Chi2 kernel ***');
-    [precomp_chi2_svm_lab,conf]=svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
-    
+    disp('*** SVM - Chi2 kernel (test) ***');
+    [precomp_chi2_svm_lab_test,conf_test]=svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
     method_name='SVM Chi2';
-    % Compute classification accuracy
-    compute_accuracy(data,labels_test,precomp_chi2_svm_lab,classes,method_name,desc_test,...
+    compute_accuracy(data,labels_test,precomp_chi2_svm_lab_test,classes,method_name,desc_test,...
                       visualize_confmat & have_screen,... 
                       visualize_res & have_screen);
+
+    disp('*** SVM - Chi2 kernel (validation) ***');
+    [precomp_chi2_svm_lab_val,conf_val]=svmpredict(labels_val,[(1:size(Kval,1))' Kval],model);
+    method_name='SVM Chi2';
+    compute_accuracy(data,labels_val,precomp_chi2_svm_lab_val,classes,method_name,desc_val,...
+                      visualize_confmat & have_screen,... 
+                      visualize_res & have_screen);
+    
 end
 
-%% Versione molto differente (test di filippo)
-if 1 %do_svm_chi2_classification    
+%% Versione molto differente (test di filippo da deprecare)
+if 0 %do_svm_chi2_classification    
     % compute kernel matrix
 
     % Calcolare le matrici di kernel precomputate
@@ -600,44 +612,44 @@ if 1 %do_svm_chi2_classification
     Ktest = [(1:n_test)', kernel_expchi2(bof_test, bof_train)];
     
     % Definire i valori di C
-% Definire i valori di C
-C_vals = logspace(log2(2), log2(10), 5);
-
-% Preallocare la variabile per memorizzare le precisioni di cross-validation
-xval_acc = zeros(length(C_vals), 1);
-
-% Scegliere un kernel, ad esempio un kernel RBF
-kernelFunction = 'rbf';  % Può essere 'linear', 'polynomial', 'rbf', ecc.
-
-% Eseguire la cross-validation
-for i = 1:length(C_vals)
-    % Creare il modello SVM con il kernel specificato
-    template = templateSVM('KernelFunction', kernelFunction, 'BoxConstraint', C_vals(i));
+    % Definire i valori di C
+    C_vals = logspace(log2(2), log2(10), 5);
     
-    % Addestrare il modello utilizzando fitcecoc
-    model = fitcecoc(bof_train, labels_train, 'Learners', template);
+    % Preallocare la variabile per memorizzare le precisioni di cross-validation
+    xval_acc = zeros(length(C_vals), 1);
     
-    % Eseguire la cross-validation sul modello addestrato
-    CVSVMModel = crossval(model, 'KFold', 5);
+    % Scegliere un kernel, ad esempio un kernel RBF
+    kernelFunction = 'rbf';  % Può essere 'linear', 'polynomial', 'rbf', ecc.
+
+    % Eseguire la cross-validation
+    for i = 1:length(C_vals)
+        % Creare il modello SVM con il kernel specificato
+        template = templateSVM('KernelFunction', kernelFunction, 'BoxConstraint', C_vals(i));
+        
+        % Addestrare il modello utilizzando fitcecoc
+        model = fitcecoc(bof_train, labels_train, 'Learners', template);
+        
+        % Eseguire la cross-validation sul modello addestrato
+        CVSVMModel = crossval(model, 'KFold', 5);
+        
+        % Precisione media della cross-validation
+        xval_acc(i) = 1 - kfoldLoss(CVSVMModel);
+    end
+
+    % Trovare il valore di C con la migliore accuratezza
+    [~, ind] = max(xval_acc);
     
-    % Precisione media della cross-validation
-    xval_acc(i) = 1 - kfoldLoss(CVSVMModel);
-end
-
-% Trovare il valore di C con la migliore accuratezza
-[~, ind] = max(xval_acc);
-
-% Addestrare il modello finale usando il valore ottimale di C
-finalSVMModel = fitcecoc(bof_train, labels_train, ...
-                         'Learners', templateSVM('KernelFunction', kernelFunction, ...
-                                                 'BoxConstraint', C_vals(ind)));
-
-% Testare il modello
-[precomp_chi2_svm_lab, scores] = predict(finalSVMModel, bof_test);
-
-
-accuracy = sum(precomp_chi2_svm_lab == labels_test) / length(labels_test);
-accuracy
+    % Addestrare il modello finale usando il valore ottimale di C
+    finalSVMModel = fitcecoc(bof_train, labels_train, ...
+                             'Learners', templateSVM('KernelFunction', kernelFunction, ...
+                                                     'BoxConstraint', C_vals(ind)));
+    
+    % Testare il modello
+    [precomp_chi2_svm_lab, scores] = predict(finalSVMModel, bof_test);
+    
+    
+    accuracy = sum(precomp_chi2_svm_lab == labels_test) / length(labels_test);
+    accuracy
 
 
     method_name='SVM Chi2';

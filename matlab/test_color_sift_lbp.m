@@ -9,7 +9,7 @@
 %                                                                         %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%FILIPPO TI STO
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                         %
 %   BOW pipeline: Image classification using bag-of-features              %
@@ -514,7 +514,7 @@ if do_svm_precomp_linear_classification
     % compute kernel matrix
     Ktrain = new_bof_train*new_bof_train';
     Ktest = new_bof_test*new_bof_train';
-    
+    Kval = bof_val*bof_train';
 
     % cross-validation
     C_vals=log2space(7,10,5);
@@ -529,12 +529,18 @@ if do_svm_precomp_linear_classification
     % we supply the missing scalar product (actually the values of 
     % non-support vectors could be left as zeros.... 
     % consider this if the kernel is computationally inefficient.
-    disp('*** SVM - precomputed linear kernel ***');
-    precomp_svm_lab=svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
-    
+    disp('*** SVM - precomputed linear kernel (test) ***');
+    precomp_svm_lab_test =svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
     method_name='SVM precomp linear';
     % Compute classification accuracy
-    compute_accuracy(data,labels_test,precomp_svm_lab,classes,method_name,desc_test,...
+    compute_accuracy(data,labels_test,precomp_svm_lab_test,classes,method_name,desc_test,...
+                      visualize_confmat & have_screen,... 
+                      visualize_res & have_screen);
+    % result is the same??? must be!
+
+    disp('*** SVM - precomputed linear kernel (validation) ***');
+    precomp_svm_lab_val =svmpredict(labels_val,[(1:size(Kval,1))' Kval],model);
+    compute_accuracy(data,labels_val,precomp_svm_lab_val,classes,method_name,desc_val,...
                       visualize_confmat & have_screen,... 
                       visualize_res & have_screen);
     % result is the same??? must be!
@@ -552,7 +558,7 @@ end
 %   End of EXERCISE 4.3 and 4.4                                           %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% non rivisto per validation
+%% 
 if do_svm_linar_classification
     % cross-validation
     C_vals=log2space(7,10,5);
@@ -565,12 +571,19 @@ if do_svm_linar_classification
 
     % train the model and test
     model=svmtrain(labels_train,new_bof_train,['-t 0 -c ' num2str(C_vals(ind))]);
-    disp('*** SVM - linear ***');
-    svm_lab=svmpredict(labels_test,new_bof_test,model);
-    
+    disp('*** SVM - linear (test set) ***');
+    svm_lab=svmpredict(labels_test,bof_test,model);
     method_name='SVM linear';
     % Compute classification accuracy
     compute_accuracy(data,labels_test,svm_lab,classes,method_name,desc_test,...
+                      visualize_confmat & have_screen,... 
+                      visualize_res & have_screen);
+
+    disp('*** SVM - linear (validation set) ***');
+    svm_lab_val=svmpredict(labels_val,bof_val,model);
+    method_name='SVM linear';
+    % Compute classification accuracy
+    compute_accuracy(data,labels_val,svm_lab_val,classes,method_name,desc_val,...
                       visualize_confmat & have_screen,... 
                       visualize_res & have_screen);
 end
@@ -594,12 +607,17 @@ if do_svm_chi2_classification
     model=svmtrain(labels_train,[(1:size(Ktrain,1))' Ktrain],['-t 4 -c ' num2str(C_vals(ind))] );
     % we supply the missing scalar product (actually the values of non-support vectors could be left as zeros.... 
     % consider this if the kernel is computationally inefficient.
-    disp('*** SVM - Chi2 kernel ***');
-    [precomp_chi2_svm_lab,conf]=svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
-    
+    disp('*** SVM - Chi2 kernel (test) ***');
+    [precomp_chi2_svm_lab_test,conf_test]=svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
     method_name='SVM Chi2';
-    % Compute classification accuracy
-    compute_accuracy(data,labels_test,precomp_chi2_svm_lab,classes,method_name,desc_test,...
+    compute_accuracy(data,labels_test,precomp_chi2_svm_lab_test,classes,method_name,desc_test,...
+                      visualize_confmat & have_screen,... 
+                      visualize_res & have_screen);
+
+    disp('*** SVM - Chi2 kernel (validation) ***');
+    [precomp_chi2_svm_lab_val,conf_val]=svmpredict(labels_val,[(1:size(Kval,1))' Kval],model);
+    method_name='SVM Chi2';
+    compute_accuracy(data,labels_val,precomp_chi2_svm_lab_val,classes,method_name,desc_val,...
                       visualize_confmat & have_screen,... 
                       visualize_res & have_screen);
 end

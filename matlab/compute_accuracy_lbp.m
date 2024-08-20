@@ -26,4 +26,11 @@ function compute_accuracy_lbp(data,labels_test,labels_pred,classes,method_name,d
         fprintf('Visualize NN L2-BoW classification results\n\n');
         visualize_results_lbp( classes, desc_test, labels_test, labels_pred );
     end
+
+    [macroF1, precision, recall, accuracy] = calculateMetrics(CMnorm, classes);
+    fprintf('OVERALL %s classification accuracy: %1.4f\n\n',method_name,accuracy);
+    fprintf('OVERALL %s classification precision: %1.4f\n\n',method_name,precision);
+    fprintf('OVERALL %s classification recall: %1.4f\n\n',method_name,recall);
+    fprintf('OVERALL %s classification macroF1: %1.4f\n\n',method_name,macroF1);
+    
 end

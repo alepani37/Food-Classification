@@ -20,7 +20,7 @@ function compute_accuracy(data,labels_test,labels_pred,classes,method_name,desc_
     end
     acc = mean(diag(CMnorm));
     writematrix(CMnorm,'M.csv') 
-    fprintf('OVERALL %s classification accuracy: %1.4f\n\n',method_name,acc);
+    %fprintf('OVERALL %s classification accuracy: %1.4f\n\n',method_name,acc);
 
     %% VISUALIZE examples %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %  Illustrate correcly classified and missclassified samples of each class
@@ -28,4 +28,11 @@ function compute_accuracy(data,labels_test,labels_pred,classes,method_name,desc_
         fprintf('Visualize NN L2-BoW classification results\n\n');
         visualize_results( classes, desc_test, labels_test, labels_pred );
     end
+
+    [macroF1, precision, recall, accuracy] = calculateMetrics(CMnorm, classes);
+    fprintf('OVERALL %s classification accuracy: %1.4f\n\n',method_name,accuracy);
+    fprintf('OVERALL %s classification precision: %1.4f\n\n',method_name,precision);
+    fprintf('OVERALL %s classification recall: %1.4f\n\n',method_name,recall);
+    fprintf('OVERALL %s classification macroF1: %1.4f\n\n',method_name,macroF1);
+    
 end

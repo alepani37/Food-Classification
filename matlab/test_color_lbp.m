@@ -18,7 +18,7 @@ desc_name = 'dsift';
 %desc_name = 'msdsift';
 
 % FLAGS
-do_feat_extraction = 0;
+do_feat_extraction = 1;
 do_split_sets = 1;
 do_form_codebook = 1;
 do_feat_quantization = 1;
@@ -99,7 +99,7 @@ info.base = basepath;
 info.first = "img";
 info.dsdir = dataset_dir;
 info.desc_name = desc_name;
-[trainLBP,valLBP,testLBP] = lbp_val_extraction(data,length(classes),num_train_img,num_val_img,num_test_img,info);
+[trainLBP,valLBP,testLBP] = lbp_color_extraction_val(data,length(classes),num_train_img,num_val_img,num_test_img,info);
 disp("Parametri LBP estratti correttamente")
 %% % Concatenate bof-histograms into training and test matrices 
 for i = 1 : size(trainLBP,2)

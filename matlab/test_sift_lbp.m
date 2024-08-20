@@ -29,7 +29,7 @@ close all;
 clc;
 % DATASET
 %dataset_dir='garbage_classification'; %dataset_folder_name
-dataset_dir = 'ds';
+dataset_dir = 'ds2';
 %dataset_dir = 'prova_resized_bn_2';
 
 % FEATURES extraction methods
@@ -82,15 +82,15 @@ nfeat_codebook = 120000; % number of descriptors used by k-means for the codeboo
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 170; %numero per ogni classe
+num_train_img = 184; %numero per ogni classe
 % number of images selected for test (e.g. 50 for Caltech-101)
-num_test_img = 30;  %numero per ogni classe
+num_test_img = 23;  %numero per ogni classe
 %number of images selected for validation
-num_val_img = 20;
+num_val_img = 23;
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 1500;
 %NUmero massimo di immagini prendibili per ogni classe
-num_max_img_per_classe = 221;
+num_max_img_per_classe = 238;
 
 % image file extension
 file_ext='jpg';
@@ -173,7 +173,7 @@ for i = 1:length(data) %per ogni categoria trovata
     end;
 end;
 %% Visualize SIFT features for training images
-if 1 %(do_visualize_feat && do_have_screen)
+if 0 %(do_visualize_feat && do_have_screen)
     nti=2;
     fprintf('\nVisualize features for %d training images\n', nti);
     imgind=randperm(length(desc_train));
@@ -335,7 +335,7 @@ end
 %  To visually verify feature quantization computed above, we can show 
 %  image patches corresponding to the same visual word. 
 
-if 1 %(do_visualize_words && do_have_screen)
+if 0 %(do_visualize_words && do_have_screen)
     figure;
     %num_words = size(VC,1) % loop over all visual word types
     num_words = 5;

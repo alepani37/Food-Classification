@@ -60,7 +60,7 @@ function detect_features_dsift(im_dir,file_ext,varargin)
         for psize=1:length(scales);
             [sift_tmp,gx{psize},gy{psize}]=sp_dense_sift(I,stride,scales(psize));
             sift_cell{psize}=reshape(sift_tmp,[size(sift_tmp,1)*size(sift_tmp,2) size(sift_tmp,3)]);
-            rad = {}; %Cast esplicito della variabile rad altrimenti matlab si confonde con quella 
+            %rad = {}; %Cast esplicito della variabile rad altrimenti matlab si confonde con quella 
             %già presente nel workspace
             rad{psize} = scales(psize)*ones(1,size(sift_cell{psize},1))';
         end

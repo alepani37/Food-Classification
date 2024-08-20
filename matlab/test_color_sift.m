@@ -29,7 +29,7 @@ clc;
 % DATASET
 %dataset_dir='4_ObjectCategories';
 %dataset_dir = '15_ObjectCategories';
-dataset_dir = 'ds';
+dataset_dir = 'ds2';
 %dataset_dir = 'prova_resized_bn_2';
 
 % FEATURES extraction methods
@@ -72,15 +72,15 @@ nfeat_codebook = 280000; % number of descriptors used by k-means for the codeboo
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 150; %numero per ogni classe
+num_train_img = 184; %numero per ogni classe
 %number of images selected for validation
-num_val_img = 20;
+num_val_img = 23;
 % number of images selected for test (e.g. 50 for Caltech-101)
-num_test_img = 30;  %numero per ogni classe
+num_test_img = 23;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 1000;
 %NUmero massimo di immagini prendibili per ogni classe
-num_max_img_per_classe = 200;
+num_max_img_per_classe = 238;
 
 % image file extension
 file_ext='jpg';
@@ -477,7 +477,7 @@ end
 % Construct label Concatenate bof-histograms into training and test matrices 
 labels_train=cat(1,desc_train.class);
 labels_test=cat(1,desc_test.class);
-labels_val=cat(1,desc_val(:,1).class);
+labels_val=cat(1,desc_val.class);
 
 
 %% 4.3 & 4.4: CHI-2 KERNEL (pre-compute kernel) %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -598,7 +598,7 @@ if do_svm_chi2_classification
 end
 
 %% Versione molto differente (test di filippo da deprecare)
-if 0 %do_svm_chi2_classification    
+if %do_svm_chi2_classification    
     % compute kernel matrix
 
     % Calcolare le matrici di kernel precomputate

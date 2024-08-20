@@ -29,7 +29,7 @@ for i=1:size(pos,1)
   else
       col=fcol;
   end
-  if (length(pos)<2000)
+  if (length(pos)>2000)
       h=plot(cpoints(:,1),cpoints(:,2),'LineWidth',lwidth,'Parent',gcah);
       set(h,'Color',col)
   end

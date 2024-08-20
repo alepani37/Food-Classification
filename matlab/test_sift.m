@@ -28,17 +28,17 @@ clear;
 close all;
 clc;
 % DATASET
-dataset_dir = 'ds';
-% dataset_dir = 'prova_resized_2';
+dataset_dir = 'ds2';
+
 
 % FEATURES extraction methods
 % 'sift' for sparse features detection (SIFT descriptors computed at  
 % Harris-Laplace keypoints) or 'dsift' for dense features detection (SIFT
 % descriptors computed at a grid of overlapped patches
 
-%desc_name = 'msdsift';
+desc_name = 'msdsift';
 %desc_name = 'dsift';
-desc_name = 'sift';
+%desc_name = 'sift';
 
 % FLAGS
 do_feat_extraction = 1;
@@ -46,7 +46,7 @@ do_split_sets = 1;
 do_form_codebook = 1;
 do_feat_quantization = 1;
 
-do_visualize_feat = 0;
+do_visualize_feat = 1;
 do_visualize_words = 0;
 do_visualize_confmat = 1;
 do_visualize_res = 0;
@@ -60,7 +60,7 @@ do_svm_precomp_linear_classification = 0;
 do_svm_inter_classification = 0;
 do_svm_chi2_classification = 1;
 
-visualize_feat = 0;
+visualize_feat = 1;
 visualize_words = 0;
 visualize_confmat = 0;
 visualize_res = 0;
@@ -149,15 +149,15 @@ for i = 1:length(data) %per ogni categoria trovata
 end;
 %% Visualize SIFT features for training images
 if (do_visualize_feat && do_have_screen)
-    nti=2;
+    nti=1;
     fprintf('\nVisualize features for %d training images\n', nti);
-    imgind=randperm(length(desc_train));
-    for i=1:nti
-        d=desc_train(imgind(i));
+    %imgind=randperm(length(desc_train));
+    for i=1:nti 
+        d=desc_train(i+100);
         clf, showimage(imread(strrep(d.imgfname,'_train','')));
-        x=d.c;
+        x=d.c; 
         y=d.r;
-        rad=d.rad;
+        rad=d.rad/5;
         showcirclefeaturesrad([x,y,rad]);
         %title(sprintf('%d features in %s',length(d.c),d.imgfname));
         pause

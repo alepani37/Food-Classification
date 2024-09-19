@@ -18,7 +18,7 @@ for i=1:length(classes)
     imgcorr={};
     if length(indcorr)
         for j=1:length(indcorr) 
-            imgcorr{end+1}=imread(desc_test(indcorr(j)).filename);
+            imgcorr{end+1}=imread(desc_test(indcorr(j)).imgfname);
         end
         subplot(1,2,1), showimage(combimage(imgcorr,[],1))
         title(sprintf('%d Correctly classified %s images',length(indcorr),classes{i}))
@@ -33,7 +33,7 @@ for i=1:length(classes)
         % title(sprintf('%d Miss-classified %s images',length(indmiss),classes{i}))
 
         for j=1:length(indmiss)
-            imgmiss{end+1} = imread(desc_test(indmiss(j)).filename);
+            imgmiss{end+1} = imread(desc_test(indmiss(j)).imgfname);
         end
 
         max_images_per_row = 6; % Numero massimo di immagini per riga

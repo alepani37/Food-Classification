@@ -19,9 +19,9 @@ function [trainLBP,testLBP, valLBP] = lbp_color_extraction_val(data,num_classes,
             B = im(:,:,3);
 
             % LBP extraction for each channel
-            lbpR = extractLBPFeatures(R);
-            lbpG = extractLBPFeatures(G);
-            lbpB = extractLBPFeatures(B);
+            lbpR = extractLBPFeatures(R,"Upright",true,"Normalization","L2");
+            lbpG = extractLBPFeatures(G,"Upright",true,"Normalization","L2");
+            lbpB = extractLBPFeatures(B,"Upright",true,"Normalization","L2");
 
             fname =  fullfile(info.base, info.first,info.dsdir,data(i).classname,img(j));
             base_fname = regexprep(fname,['.' info.desc_name],'.jpg');
@@ -48,9 +48,9 @@ function [trainLBP,testLBP, valLBP] = lbp_color_extraction_val(data,num_classes,
             B = im(:,:,3);
 
             % LBP extraction for each channel
-            lbpR = extractLBPFeatures(R);
-            lbpG = extractLBPFeatures(G);
-            lbpB = extractLBPFeatures(B);
+            lbpR = extractLBPFeatures(R,"Upright",true,"Normalization","L2");
+            lbpG = extractLBPFeatures(G,"Upright",true,"Normalization","L2");
+            lbpB = extractLBPFeatures(B,"Upright",true,"Normalization","L2");
             
             % Save the LBP histograms for each channel consecutively
             fname = fullfile(info.base, info.first, info.dsdir, data(i).classname, img(j));
@@ -78,9 +78,9 @@ function [trainLBP,testLBP, valLBP] = lbp_color_extraction_val(data,num_classes,
             B = im(:,:,3);
 
             % LBP extraction for each channel
-            lbpR = extractLBPFeatures(R);
-            lbpG = extractLBPFeatures(G);
-            lbpB = extractLBPFeatures(B);
+            lbpR = extractLBPFeatures(R,"Upright",true,"Normalization","L2");
+            lbpG = extractLBPFeatures(G,"Upright",true,"Normalization","L2");
+            lbpB = extractLBPFeatures(B,"Upright",true,"Normalization","L2");
             
             % Save the LBP histograms for each channel consecutively
             fname = fullfile(info.base, info.first, info.dsdir, data(i).classname, img(j));

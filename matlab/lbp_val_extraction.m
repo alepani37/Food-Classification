@@ -21,7 +21,7 @@ function [trainLBP, valLBP, testLBP] = lbp_val_extraction(data, num_classes, num
             im = rgb2gray(im); 
 
             % LBP extraction
-            lbp_img = extractLBPFeatures(im);
+            lbp_img = extractLBPFeatures(im,"Upright",true,"Normalization","L2");
             fname = fullfile(info.base, info.first, info.dsdir, data(i).classname, img(j));
             trainLBP_{i, j}.filename = regexprep(fname, ['.' info.desc_name], '.jpg');
             trainLBP_{i, j}.hist = lbp_img;
@@ -35,7 +35,7 @@ function [trainLBP, valLBP, testLBP] = lbp_val_extraction(data, num_classes, num
             im = rgb2gray(im); 
 
             % LBP extraction
-            lbp_img = extractLBPFeatures(im);
+            lbp_img = extractLBPFeatures(im,"Upright",true,"Normalization","L2");
             fname = fullfile(info.base, info.first, info.dsdir, data(i).classname, img(j));
             valLBP_{i, j}.filename = regexprep(fname, ['.' info.desc_name], '.jpg');
             valLBP_{i, j}.hist = lbp_img;
@@ -49,7 +49,7 @@ function [trainLBP, valLBP, testLBP] = lbp_val_extraction(data, num_classes, num
             im = rgb2gray(im); 
 
             % LBP extraction
-            lbp_img = extractLBPFeatures(im);
+            lbp_img = extractLBPFeatures(im,"Upright",true,"Normalization","L2");
             fname = fullfile(info.base, info.first, info.dsdir, data(i).classname, img(j));
             testLBP_{i, j}.filename = regexprep(fname, ['.' info.desc_name], '.jpg');
             testLBP_{i, j}.hist = lbp_img;

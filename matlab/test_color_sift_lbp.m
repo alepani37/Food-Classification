@@ -68,19 +68,19 @@ addpath(libsvmpath)
 
 % BOW PARAMETERS
 max_km_iters = 1500; % maximum number of iterations for k-means
-nfeat_codebook = 280000; % number of descriptors used by k-means for the codebook generation
+nfeat_codebook = 500000; % number of descriptors used by k-means for the codebook generation
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 150; %numero per ogni classe
+num_train_img = 142; %numero per ogni classe
 %number of images selected for validation
-num_val_img = 20;
+num_val_img = 48;
 % number of images selected for test (e.g. 50 for Caltech-101)
-num_test_img = 30;  %numero per ogni classe
+num_test_img = 48;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 1200;
 %NUmero massimo di immagini prendibili per ogni classe
-num_max_img_per_classe = 200;
+num_max_img_per_classe = 238;
 
 % image file extension
 file_ext='jpg';
@@ -593,7 +593,7 @@ if do_svm_chi2_classification
     % compute kernel matrix
     Ktrain = kernel_expchi2(new_bof_train,new_bof_train);
     Ktest = kernel_expchi2(new_bof_test,new_bof_train);
-    Kval = new_bof_val*new_bof_val';
+    Kval = kernel_expchi2(new_bof_val,new_bof_train);
 
     % cross-validation
     C_vals=log2space(2,10,5);
@@ -611,7 +611,7 @@ if do_svm_chi2_classification
     [precomp_chi2_svm_lab_test,conf_test]=svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
     method_name='SVM Chi2';
     compute_accuracy(data,labels_test,precomp_chi2_svm_lab_test,classes,method_name,desc_test,...
-                      visualize_confmat & have_screen,... 
+                      1,... 
                       visualize_res & have_screen);
 
     disp('*** SVM - Chi2 kernel (validation) ***');
@@ -620,15 +620,20 @@ if do_svm_chi2_classification
     compute_accuracy(data,labels_val,precomp_chi2_svm_lab_val,classes,method_name,desc_val,...
                       visualize_confmat & have_screen,... 
                       visualize_res & have_screen);
+    disp('*** SVM - Chi2 kernel (train) ***');
+    [precomp_chi2_svm_lab_train,conf_train]=svmpredict(labels_train,[(1:size(Ktrain,1))' Ktrain],model);
+    compute_accuracy(data,labels_train,precomp_chi2_svm_lab_train,classes,method_name,desc_train,...
+                      visualize_confmat & have_screen,... 
+                      visualize_res & have_screen);
 end
 
 
 %% rivisto per validation
-if do_svm_chi2_classification    
+if 0   
     % compute kernel matrix
     Ktrain = kernel_expchi2(new_bof_train,new_bof_train);
     Ktest = kernel_expchi2(new_bof_test,new_bof_train);
-    Kval = new_bof_val*new_bof_val';
+    Kval = kernel_epochi2(new_bof_val,new_bof_train);
     
     % cross-validation
     C_vals=log2space(2,10,5);

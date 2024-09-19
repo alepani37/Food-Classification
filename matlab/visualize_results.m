@@ -68,7 +68,6 @@ for i=1:length(classes)
         sgtitle(sprintf('%d Miss-classified %s images', length(indmiss), classes{i}));
 
     end
-    
     pause;
 end
 

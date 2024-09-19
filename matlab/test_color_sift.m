@@ -48,11 +48,15 @@ do_feat_quantization = 1;
 
 do_L2_NN_classification = 0;
 do_chi2_NN_classification = 0;
-do_svm_linar_classification = 1;
+do_svm_linar_classification = 0;
 do_svm_llc_linar_classification = 0;
 do_svm_precomp_linear_classification = 0;
 do_svm_inter_classification = 0;
+<<<<<<< Updated upstream
 do_svm_chi2_classification = 0;
+=======
+do_svm_chi2_classification = 1;
+>>>>>>> Stashed changes
 
 visualize_feat = 0;
 visualize_words = 0;
@@ -68,17 +72,17 @@ addpath(libsvmpath)
 
 % BOW PARAMETERS
 max_km_iters = 1500; % maximum number of iterations for k-means
-nfeat_codebook = 280000; % number of descriptors used by k-means for the codebook generation
+nfeat_codebook = 500000; % number of descriptors used by k-means for the codebook generation
 norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 184; %numero per ogni classe
+num_train_img = 142; %numero per ogni classe
 %number of images selected for validation
-num_val_img = 23;
+num_val_img = 48;
 % number of images selected for test (e.g. 50 for Caltech-101)
-num_test_img = 23;  %numero per ogni classe
+num_test_img = 48;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
-nwords_codebook = 1000;
+nwords_codebook = 1200;
 %NUmero massimo di immagini prendibili per ogni classe
 num_max_img_per_classe = 238;
 
@@ -585,8 +589,8 @@ if do_svm_chi2_classification
     [precomp_chi2_svm_lab_test,conf_test]=svmpredict(labels_test,[(1:size(Ktest,1))' Ktest],model);
     method_name='SVM Chi2';
     compute_accuracy(data,labels_test,precomp_chi2_svm_lab_test,classes,method_name,desc_test,...
-                      visualize_confmat & have_screen,... 
-                      visualize_res & have_screen);
+                      1,... 
+                      1);
 
     disp('*** SVM - Chi2 kernel (validation) ***');
     [precomp_chi2_svm_lab_val,conf_val]=svmpredict(labels_val,[(1:size(Kval,1))' Kval],model);
@@ -594,11 +598,19 @@ if do_svm_chi2_classification
     compute_accuracy(data,labels_val,precomp_chi2_svm_lab_val,classes,method_name,desc_val,...
                       visualize_confmat & have_screen,... 
                       visualize_res & have_screen);
+    [precomp_chi2_svm_lab_train,conf_train]=svmpredict(labels_train,[(1:size(Ktrain,1))' Ktrain],model);
+    compute_accuracy(data,labels_train,precomp_chi2_svm_lab_train,classes,method_name,desc_train,...
+                      visualize_confmat & have_screen,... 
+                      visualize_res & have_screen);
     
 end
 
 %% Versione molto differente (test di filippo da deprecare)
+<<<<<<< Updated upstream
 if 0 %do_svm_chi2_classification    
+=======
+if 0%do_svm_chi2_classification    
+>>>>>>> Stashed changes
     % compute kernel matrix
 
     % Calcolare le matrici di kernel precomputate

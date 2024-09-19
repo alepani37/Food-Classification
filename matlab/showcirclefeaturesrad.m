@@ -33,7 +33,7 @@ for i=1:size(pos,1)
       h=plot(cpoints(:,1),cpoints(:,2),'LineWidth',lwidth,'Parent',gcah);
       set(h,'Color',col)
   end
-  h=plot(x0,y0,'x','Parent',gcah);
+  h=plot(x0,y0,'x','Parent',gcah,'Markersize',20,LineWidth=3);
   set(h,'Color',col)
 end
 

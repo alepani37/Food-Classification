@@ -3,7 +3,14 @@ clear;
 close all;
 clc;
 % DATASET
+<<<<<<< Updated upstream
 dataset_dir='ds'; %dataset_folder_name
+=======
+%dataset_dir='food'; %dataset_folder_name
+dataset_dir='ds2'; %dataset_folder_name
+%dataset_dir = 'prova_resized_bn_2';
+%dataset_dir = '4_ObjectCategories';
+>>>>>>> Stashed changes
 
 % FEATURES extraction methods
 % 'sift' for sparse features detection (SIFT descriptors computed at  
@@ -15,7 +22,7 @@ desc_name = 'dsift';
 %desc_name = 'msdsift';
 
 % FLAGS
-do_feat_extraction = 1;
+do_feat_extraction = 0;
 do_split_sets = 1;
 do_form_codebook = 1;
 do_feat_quantization = 1;
@@ -48,12 +55,12 @@ norm_bof_hist = 1;
 
 % number of images selected for training (e.g. 30 for Caltech-101)
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 184; %numero per ogni classe
+num_train_img = 142; %numero per ogni classe
 
 %number of images selected fo validation
-num_val_img = 23;
+num_val_img = 48;
 % number of images selected for test (e.g. 50 for Caltech-101)
-num_test_img = 23;  %numero per ogni classe
+num_test_img = 48;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 1200;
 %NUmero massimo di immagini prendibili per ogni classe
@@ -333,8 +340,8 @@ if do_svm_chi2_classification
         visualize_confmat & have_screen,...
         visualize_res & have_screen);
     compute_accuracy_lbp(data,labels_test,precomp_chi2_svm_lab_test,classes,method_name,testLBP,...
-        visualize_confmat & have_screen,...
-        visualize_res & have_screen);
+        1,...
+        0);
     %methods_name(end+1) = method_name + ' k=' + nwords_codebook;
     %bar_values(end+1, :) = [acc_SVM_CHI2_train,acc_SVM_CHI2_val,acc_SVM_CHI2_test];
 

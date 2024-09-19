@@ -51,13 +51,13 @@ do_feat_quantization = 1;
 
 do_L2_NN_classification = 0;
 do_chi2_NN_classification = 0;
-do_svm_linar_classification = 1;
+do_svm_linar_classification = 0;
 do_svm_llc_linar_classification = 0;
-do_svm_precomp_linear_classification = 1;
-do_svm_inter_classification = 1;
+do_svm_precomp_linear_classification = 0;
+do_svm_inter_classification = 0;
 do_svm_chi2_classification = 1;
 
-visualize_feat = 1;
+visualize_feat = 0 ;
 visualize_words = 0;
 visualize_confmat = 0;
 visualize_res = 0;
@@ -72,17 +72,17 @@ addpath(libsvmpath)
 
 % BOW PARAMETERS
 max_km_iters = 1000; % maximum number of iterations for k-means
-nfeat_codebook = 120000; % number of descriptors used by k-means for the codebook generation
+nfeat_codebook = 500000; % number of descriptors used by k-means for the codebook generation
 norm_bof_hist = 1;
 
 %%ROBA AGGIUNTA%%%%%%%
 % number of images selected for training (e.g. 30 for Caltech-101)
-num_train_img = 184; %numero per ogni classe
+num_train_img = 142; %numero per ogni classe
 
 %number of images selected fo validation
-num_val_img = 23;
+num_val_img = 48;
 % number of images selected for test (e.g. 50 for Caltech-101)
-num_test_img = 23;  %numero per ogni classe
+num_test_img = 48;  %numero per ogni classe
 % number of codewords (i.e. K for the k-means algorithm)
 nwords_codebook = 1200;
 %NUmero massimo di immagini prendibili per ogni classe
@@ -560,8 +560,8 @@ if do_svm_chi2_classification
         visualize_confmat & have_screen,...
         visualize_res & have_screen,"VALIDATION SET");
     acc_SVM_CHI2_test = compute_accuracy_pyr(data,labels_test,precomp_chi2_svm_lab_test,classes,method_name,desc_test,...
-        visualize_confmat & have_screen,...
-        visualize_res & have_screen,"TEST SET");
+        1,...
+        1,"TEST SET");
     %methods_name(end+1) = method_name + ' k=' + nwords_codebook;
     %bar_values(end+1, :) = [acc_SVM_CHI2_train,acc_SVM_CHI2_val,acc_SVM_CHI2_test];
 

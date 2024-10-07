@@ -1,0 +1,1 @@
+Here goes the folder that contains tot subfolders each indicating one of the classes

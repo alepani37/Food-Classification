@@ -3,14 +3,8 @@ clear;
 close all;
 clc;
 % DATASET
-<<<<<<< Updated upstream
-dataset_dir='ds'; %dataset_folder_name
-=======
-%dataset_dir='food'; %dataset_folder_name
-dataset_dir='ds2'; %dataset_folder_name
-%dataset_dir = 'prova_resized_bn_2';
-%dataset_dir = '4_ObjectCategories';
->>>>>>> Stashed changes
+dataset_dir='food_images_dataset'; %dataset_folder_name
+
 
 % FEATURES extraction methods
 % 'sift' for sparse features detection (SIFT descriptors computed at  
